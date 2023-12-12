@@ -1,0 +1,36 @@
+name: Test Workflow
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  Unit:
+    name: Unit test
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Dependencies Installation
+        run: npm install
+      - name: Run tests
+        run: npm run test
+  Coverage:
+    name: Coverage test
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Dependencies Installation
+        run: npm install
+      - name: Run coverage test
+        run: npm run test:cov
+      - name: Test coverage threshold check
+        run: |
+          COVERAGE_THRESHOLD=10
+          ACTUAL_COVERAGE=$(cat coverage/coverage-summary.json | jq -r '.total.lines.pct')
+          if (( $(echo "$ACTUAL_COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
+          echo "Coverage is below threshold ($COVERAGE_THRESHOLD)."
+          exit 1
+          fi
