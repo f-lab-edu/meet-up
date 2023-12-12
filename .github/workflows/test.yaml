@@ -1,0 +1,17 @@
+name: Test Workflow
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  Unit:
+    name: Unit test
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Dependencies Installation
+        run: npm install
+      - name: Run tests
+        run: npm run test
