@@ -1,0 +1,17 @@
+name: Code Style Check Workflow
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  Style:
+    name: Check code style
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install ESLint
+        run: npm i -D eslint
+      - name: Check code style
+        run: npm run lint:check
