@@ -11,15 +11,6 @@
   "monorepo": true,
   "root": "apps/meet-up",
   "projects": {
-    "meet-up": {
-      "type": "application",
-      "root": "apps/meet-up",
-      "entryFile": "main",
-      "sourceRoot": "apps/meet-up/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/meet-up/tsconfig.app.json"
-      }
-    },
     "members": {
       "type": "application",
       "root": "apps/members",
