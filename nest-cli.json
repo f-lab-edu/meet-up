@@ -3,14 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/meet-up/src",
   "compilerOptions": {
-    "builder": {
-      "type": "swc",
-      "options": {
-        "swcrcPath": "infra/.swcrc"
-      }
-    },
     "typeCheck": true,
     "webpack": true,
+    "webpackConfigPath": "./webpack.config.js",
     "tsConfigPath": "apps/meet-up/tsconfig.app.json"
   },
   "monorepo": true,
