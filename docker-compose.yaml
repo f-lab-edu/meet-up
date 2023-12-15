@@ -1,0 +1,29 @@
+version: "3"
+services:
+  meetings:
+    container_name: meetings-service
+    build:
+      context: .
+      args:
+        APP: meetings
+    restart: always
+    ports:
+      - "8080:3000"
+  members:
+    container_name: members-service
+    build:
+      context: .
+      args:
+        APP: members
+    restart: always
+    ports:
+      - "8081:3000"
+  attendances:
+    container_name: attendances-service
+    build:
+      context: .
+      args:
+        APP: attendances
+    restart: always
+    ports:
+      - "8082:3000"

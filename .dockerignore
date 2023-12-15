@@ -1,0 +1,10 @@
+node_modules
+.github
+/coverage
+/dist
+.eslintrc.js
+.gitignore
+.prettierrc
+docker-compose.yaml
+Dockerfile
+README.md
