@@ -3,8 +3,7 @@ import { AttendancesService } from './attendances.service'
 
 @Controller()
 export class AttendancesController {
-	constructor(private readonly attendancesService: AttendancesService) {
-	}
+	constructor(private readonly attendancesService: AttendancesService) {}
 
 	@Get()
 	getHello(): string {

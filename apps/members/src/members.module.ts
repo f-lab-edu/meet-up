@@ -7,5 +7,4 @@ import { MembersService } from './members.service'
 	controllers: [MembersController],
 	providers: [MembersService],
 })
-export class MembersModule {
-}
+export class MembersModule {}

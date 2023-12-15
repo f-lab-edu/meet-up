@@ -7,5 +7,4 @@ import { MeetingsService } from './meetings.service'
 	controllers: [MeetingsController],
 	providers: [MeetingsService],
 })
-export class MeetingsModule {
-}
+export class MeetingsModule {}
