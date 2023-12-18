@@ -1,14 +1,42 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/meet-up/src",
   "compilerOptions": {
-    "builder": {
-      "type": "swc",
-      "options": {
-        "swcrcPath": "infra/.swcrc"
+    "typeCheck": true,
+    "webpack": true,
+    "webpackConfigPath": "./webpack.config.js",
+    "tsConfigPath": "apps/meet-up/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/meet-up",
+  "projects": {
+    "members": {
+      "type": "application",
+      "root": "apps/members",
+      "entryFile": "main",
+      "sourceRoot": "apps/members/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/members/tsconfig.app.json"
       }
     },
-    "typeCheck": true
+    "meetings": {
+      "type": "application",
+      "root": "apps/meetings",
+      "entryFile": "main",
+      "sourceRoot": "apps/meetings/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/meetings/tsconfig.app.json"
+      }
+    },
+    "attendances": {
+      "type": "application",
+      "root": "apps/attendances",
+      "entryFile": "main",
+      "sourceRoot": "apps/attendances/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/attendances/tsconfig.app.json"
+      }
+    }
   }
 }
