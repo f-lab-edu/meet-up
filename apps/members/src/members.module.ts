@@ -6,9 +6,11 @@ import { Member } from '@app/entities/members/member.entity'
 import { Meeting } from '@app/entities/meetings/meeting.entity'
 import { Attendance } from '@app/entities/attendances/attendance.entity'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
 	imports: [
+		ConfigModule.forRoot(),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			host: 'database',
