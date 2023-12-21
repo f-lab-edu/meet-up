@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { Length, Max, Min } from 'class-validator'
+import { Attendance } from '../attendances/attendance.entity'
 
 @Entity('meetings')
 export class Meeting {
@@ -23,4 +24,7 @@ export class Meeting {
 
 	@Column()
 	note: string
+
+	@OneToMany(() => Attendance, attendance => attendance.meeting)
+	attendances: Attendance[]
 }
