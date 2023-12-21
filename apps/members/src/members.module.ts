@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common'
 import { MembersController } from './members.controller'
 import { MembersService } from './members.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Member } from '../../../libs/entities/src/members/member.entity'
-import { Meeting } from '../../../libs/entities/src/meetings/meeting.entity'
-import { Attendance } from '../../../libs/entities/src/attendances/attendance.entity'
+import { Member } from '@app/entities/members/member.entity'
+import { Meeting } from '@app/entities/meetings/meeting.entity'
+import { Attendance } from '@app/entities/attendances/attendance.entity'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 
 @Module({
