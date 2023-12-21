@@ -7,6 +7,9 @@ services:
       args:
         APP: meetings
     restart: always
+    depends_on:
+      database:
+        condition: service_healthy
     ports:
       - "8080:3000"
   members:
@@ -16,6 +19,9 @@ services:
       args:
         APP: members
     restart: always
+    depends_on:
+      database:
+        condition: service_healthy
     ports:
       - "8081:3000"
   attendances:
@@ -25,5 +31,26 @@ services:
       args:
         APP: attendances
     restart: always
+    depends_on:
+      database:
+        condition: service_healthy
     ports:
       - "8082:3000"
+  database:
+    # How to Use the Postgres Docker Official Image
+    # https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
+    image: postgres
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    user: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+volumes:
+  pgdata:
