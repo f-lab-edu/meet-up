@@ -17,6 +17,11 @@ export class Meeting {
 	@Max(53, { message: 'Week must be less than or equal to 53' })
 	week: number
 
+	@Column({ type: 'integer' })
+	@Min(1, { message: 'Quarter must be greater than 0' })
+	@Max(4, { message: 'Quarter must be less than or equal to 4' })
+	quarter: number
+
 	@Column({ type: 'date' })
 	date: Date
 
