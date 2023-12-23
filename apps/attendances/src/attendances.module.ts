@@ -20,6 +20,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 			synchronize: true,
 			namingStrategy: new SnakeNamingStrategy(),
 		}),
+		TypeOrmModule.forFeature([Attendance]),
 	],
 	controllers: [AttendancesController],
 	providers: [AttendancesService],
