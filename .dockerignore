@@ -8,3 +8,4 @@ node_modules
 docker-compose.yaml
 Dockerfile
 README.md
+/infra/cfn-template.yaml

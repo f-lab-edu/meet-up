@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Main resource template for meet-up app.
+Parameters:
+  ProjectName:
+    Type: String
+    Description: The name of the project
+    Default: meet-up
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Main
+        Parameters:
+          - ProjectName
