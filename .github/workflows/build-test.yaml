@@ -12,4 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run Docker Compose
-        run: docker compose up
+        run: docker compose up -d
+      - name: Verify Docker Compose
+        run: |
+          if docker-compose ps | grep 'Exit'; then
+            echo 'A Docker container did NOT start successfully';
+            exit 1;
+          fi
