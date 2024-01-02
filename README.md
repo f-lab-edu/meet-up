@@ -1,3 +1,21 @@
+# Run
+
+## Local
+
+Prerequisites
+
+- Docker
+
+To run all services locally, use Docker Compose.
+
+```shell
+docker compose up
+```
+
+## Cloud
+
+*TBD*
+
 # Microservices Architecture
 
 Due to the varying levels of traffic that each service in the project receives throughout the week, it appears to be
