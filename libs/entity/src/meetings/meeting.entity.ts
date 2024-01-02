@@ -2,9 +2,10 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { Length, Max, Min } from 'class-validator'
 import { Attendance } from '../attendances/attendance.entity'
 import { Member } from '../members/member.entity'
+import { AbstractEntity } from '../common/abstract.entity'
 
 @Entity('meetings')
-export class Meeting {
+export class Meeting extends AbstractEntity {
 	@PrimaryGeneratedColumn('increment')
 	id: number
 

@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { Attendance } from '../attendances/attendance.entity'
+import { AbstractEntity } from '../common/abstract.entity'
 
 export enum MemberRole {
 	ADMIN = 'admin',
@@ -8,7 +9,7 @@ export enum MemberRole {
 }
 
 @Entity('members')
-export class Member {
+export class Member extends AbstractEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id: number
 
