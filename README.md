@@ -16,6 +16,18 @@ docker compose up
 
 *TBD*
 
+# Logging
+
+Logging on HTTP `request` and `response` is implemented as a *Middleware function* and followed the official course.
+
+The format follows: `${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip} ${traceId}`
+
+The below is an example log.
+
+```
+[Nest] 1  - 01/09/2024, 4:04:03 AM     LOG [HTTP] GET / 200 12 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 ::ffff:192.168.65.1 69bfd94b-23e6-4a37-8f79-c2dbb296946d +1568ms
+```
+
 # Microservices Architecture
 
 Due to the varying levels of traffic that each service in the project receives throughout the week, it appears to be
