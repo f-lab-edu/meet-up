@@ -7,10 +7,11 @@ import { Meeting } from '@app/entities/meetings/meeting.entity'
 import { Attendance } from '@app/entities/attendances/attendance.entity'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import { ConfigModule } from '@nestjs/config'
+import configuration from '@app/config/configuration'
 
 @Module({
 	imports: [
-		ConfigModule.forRoot({ ignoreEnvFile: true }),
+		ConfigModule.forRoot({ load: [configuration], ignoreEnvFile: true }),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			host: 'database',
