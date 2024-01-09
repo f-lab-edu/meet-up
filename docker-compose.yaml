@@ -12,6 +12,8 @@ services:
         condition: service_healthy
     ports:
       - "8080:3000"
+    environment:
+      - NODE_ENV=development
   members:
     container_name: members-service
     build:
@@ -24,6 +26,8 @@ services:
         condition: service_healthy
     ports:
       - "8081:3000"
+    environment:
+      - NODE_ENV=development
   attendances:
     container_name: attendances-service
     build:
@@ -36,6 +40,8 @@ services:
         condition: service_healthy
     ports:
       - "8082:3000"
+    environment:
+      - NODE_ENV=development
   database:
     # How to Use the Postgres Docker Official Image
     # https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
