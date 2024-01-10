@@ -18,4 +18,8 @@ describe('RolesGuard', () => {
 	it('should be defined', () => {
 		expect(guard).toBeDefined()
 	})
+	// todo change roles to numeric so that the roles can be compared.
+	it.todo('should grant access if no roles are required')
+	it.todo('should grant access if user has the required role or higher')
+	it.todo('should deny access if user does not have the required role or higher')
 })
