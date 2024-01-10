@@ -79,7 +79,11 @@ describe('MembersService', () => {
 		describe('when querying for members who has participated the last meeting', () => {
 			it.todo('should return the array of members who has participated the last meeting')
 		})
+		describe('when querying for the deleted members', () => {
+			it.todo('should return the array of deleted members')
+		})
 		describe('otherwise', () => {
+			it.todo('should not return the deleted members')
 			it.todo('should return the array of members')
 		})
 	})
@@ -111,6 +115,21 @@ describe('MembersService', () => {
 		})
 		describe('otherwise', () => {
 			it.todo('should create a new member')
+		})
+	})
+	describe('update', () => {
+		// todo 질문: transaction 을 통해서 find -> 없으면 update 하는게 나은지 아니면 update 에서 검사해주는게 나은지
+		describe('when updating phone number which is duplicate', () => {
+			it.todo('should throw an error')
+		})
+		describe('when updating either nickname, lastName, or both, the resulting combination must no create a duplicate', () => {
+			it.todo('should throw an error')
+		})
+		describe.each(['id', 'role', 'attendances'])('when trying to update the column %s', () => {
+			it.todo('should throw an error')
+		})
+		describe('otherwise', () => {
+			it.todo('should update the member')
 		})
 	})
 })
