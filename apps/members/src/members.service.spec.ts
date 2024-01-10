@@ -132,4 +132,12 @@ describe('MembersService', () => {
 			it.todo('should update the member')
 		})
 	})
+	describe('delete', () => {
+		describe('when the member is already deleted', () => {
+			it.todo('should throw an error')
+		})
+		describe('otherwise', () => {
+			it.todo('should delete the member')
+		})
+	})
 })
