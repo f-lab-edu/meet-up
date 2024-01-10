@@ -1,12 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { Attendance } from '../attendances/attendance.entity'
 import { AbstractEntity } from '../common/abstract.entity'
-
-export enum MemberRole {
-	ADMIN = 'admin',
-	CERTIFIED = 'certified',
-	UNCERTIFIED = 'uncertified',
-}
+import { Role } from '@app/entities/members/role.enums'
 
 @Entity('members')
 export class Member extends AbstractEntity {
@@ -15,10 +10,10 @@ export class Member extends AbstractEntity {
 
 	@Column({
 		type: 'enum',
-		enum: MemberRole,
-		default: MemberRole.UNCERTIFIED,
+		enum: Role,
+		default: Role.UNCERTIFIED,
 	})
-	role: MemberRole
+	role: Role
 
 	@Column()
 	firstName: string
