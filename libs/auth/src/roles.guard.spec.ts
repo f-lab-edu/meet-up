@@ -32,6 +32,16 @@ describe('RolesGuard', () => {
 
 		expect(guard.canActivate(context)).toBe(true)
 	})
-	it.todo('should grant access if user has the required role or higher')
+	it('should grant access if user has the required role or higher', () => {
+		jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(Role.CERTIFIED)
+
+		const context = {
+			switchToHttp: () => ({ getRequest: () => ({ user: { role: Role.ADMIN } }) }),
+			getHandler: jest.fn(),
+			getClass: jest.fn(),
+		} as unknown as ExecutionContext
+
+		expect(guard.canActivate(context)).toBe(true)
+	})
 	it.todo('should deny access if user does not have the required role or higher')
 })
