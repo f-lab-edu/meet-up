@@ -5,7 +5,7 @@ import { ROLES_KEY } from '@app/auth/roles.decorators'
 
 // todo move this interface somewhere else
 interface User {
-	roles: Role[]
+	role: Role
 }
 
 @Injectable()
@@ -13,12 +13,13 @@ export class RolesGuard implements CanActivate {
 	constructor(private reflector: Reflector) {}
 
 	canActivate(context: ExecutionContext): boolean {
-		const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [context.getHandler(), context.getClass()])
-		if (!requiredRoles) {
+		const requiredRole = this.reflector.getAllAndOverride<Role>(ROLES_KEY, [context.getHandler(), context.getClass()])
+		if (!requiredRole) {
 			return true
 		}
 
 		const { user } = context.switchToHttp().getRequest() as { user: User }
-		return requiredRoles.some(role => user.roles?.includes(role))
+		// lower value Role has more privilege
+		return user.role <= requiredRole
 	}
 }
