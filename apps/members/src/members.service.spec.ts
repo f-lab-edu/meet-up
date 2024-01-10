@@ -98,4 +98,19 @@ describe('MembersService', () => {
 			it.todo('should return the member with the nickname and lastName')
 		})
 	})
+	describe('create', () => {
+		describe('when duplicate phone number exists', () => {
+			it.todo('should throw an error')
+		})
+		describe('when duplicate member with the same nickname and lastName combination exists', () => {
+			it.todo('should throw an error')
+		})
+		// todo update these 3 fields to required columns
+		describe.each(['firstName', 'lastName', 'phone'])('when %s column is missing', () => {
+			it.todo('should throw an error')
+		})
+		describe('otherwise', () => {
+			it.todo('should create a new member')
+		})
+	})
 })
