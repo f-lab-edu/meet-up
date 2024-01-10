@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
 import { Repository } from 'typeorm'
+import { HttpException, HttpStatus } from '@nestjs/common'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -34,7 +35,17 @@ describe('MembersService', () => {
 
 	describe('findAll', () => {
 		describe('when there is no record in members table', () => {
-			it.todo('should return an empty array')
+			it('should throw HttpException 204', async () => {
+				const want = []
+				memberRepository.find.mockReturnValue(want)
+
+				try {
+					await service.findAll()
+				} catch (error) {
+					expect(error).toBeInstanceOf(HttpException)
+					expect(error.getStatus()).toBe(HttpStatus.NO_CONTENT)
+				}
+			})
 		})
 		// This case is written separately from other tests on querying by a specific column.
 		// It is because the entire enum has to be tested.
