@@ -27,4 +27,63 @@ describe('MembersService', () => {
 	it('should be defined', () => {
 		expect(service).toBeDefined()
 	})
+
+	describe('findAll', () => {
+		describe('when there is no record in members table', () => {
+			it.todo('should return an empty array')
+		})
+		// This case is written separately from other tests on querying by a specific column.
+		// It is because the entire enum has to be tested.
+		describe.each([{ role: 'ROOT' }, { role: 'ADMIN' }, { role: 'CERTIFIED' }, { role: 'UNCERTIFIED' }])('when querying by role', ({ role }) => {
+			it.todo(`should return the array of members with the role of ${role}`)
+		})
+		describe.each([
+			{
+				column: 'firstName',
+				value: 'Peter',
+			},
+			{
+				column: 'lastName',
+				value: 'Parker',
+			},
+			{
+				column: 'nickname',
+				value: 'Spider-Man',
+			},
+			{
+				column: 'phone',
+				value: '01012345678',
+			},
+		])('when querying by a value of the specific column', ({ column, value }) => {
+			it.todo(`should return the array of members with the ${column} of ${value}`)
+		})
+		describe('when querying for members who has no attendance in the current quarter', () => {
+			it.todo('should return the array of members who has no attendance in the current quarter')
+		})
+		describe('when querying for members who has no attendance in the last quarter', () => {
+			it.todo('should return the array of members who has no attendance in the last quarter')
+		})
+		describe.each([{ key: 'attendance' }])
+		describe('when there is a database error', () => {
+			it.todo('should throw an error')
+		})
+		describe('when sorting members by the length of their attendance records in all time', () => {
+			it.todo('should list members with the most attendance records first')
+		})
+		describe('when sorting members by the length of their attendance records in the current quarter', () => {
+			it.todo('should list members with the most attendance records in the current quarter first')
+		})
+		describe('when sorting members by the length of their attendance records in the last quarter', () => {
+			it.todo('should list members with the most attendance records in the last quarter first')
+		})
+		describe('when querying for members who is participating the upcoming meeting', () => {
+			it.todo('should return the array of members who is participating the upcoming meeting')
+		})
+		describe('when querying for members who has participated the last meeting', () => {
+			it.todo('should return the array of members who has participated the last meeting')
+		})
+		describe('otherwise', () => {
+			it.todo('should return the array of members')
+		})
+	})
 })
