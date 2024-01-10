@@ -5,10 +5,13 @@ import { Member } from '@app/entities/members/member.entity'
 import { Repository } from 'typeorm'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
-const createMockRepository = <T = any>(): MockRepository<T> => ({})
+const createMockRepository = <T = any>(): MockRepository<T> => ({
+	find: jest.fn(),
+})
 
 describe('MembersService', () => {
 	let service: MembersService
+	let memberRepository: MockRepository
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -22,6 +25,7 @@ describe('MembersService', () => {
 		}).compile()
 
 		service = module.get<MembersService>(MembersService)
+		memberRepository = module.get<MockRepository>(getRepositoryToken(Member))
 	})
 
 	it('should be defined', () => {
@@ -85,6 +89,13 @@ describe('MembersService', () => {
 		describe('otherwise', () => {
 			it.todo('should not return the deleted members')
 			it.todo('should return the array of members')
+			it('should return the array of members', async () => {
+				const expectedMembers = Array.from({ length: Math.round(Math.random()) }, () => new Member())
+				memberRepository.find.mockReturnValue(expectedMembers)
+
+				const members = await service.findAll()
+				expect(members).toEqual(expectedMembers)
+			})
 		})
 	})
 	describe('findOne', () => {
