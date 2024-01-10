@@ -14,7 +14,7 @@ export class MembersService {
 		return 'Hello World!'
 	}
 
-	findAll(): Member[] {
-		return []
+	async findAll(): Promise<Member[]> {
+		return await this.memberRepository.find()
 	}
 }
