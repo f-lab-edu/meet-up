@@ -1,6 +1,8 @@
 import { RolesGuard } from '@app/auth/roles.guard'
 import { Reflector } from '@nestjs/core'
 import { Test } from '@nestjs/testing'
+import { ExecutionContext } from '@nestjs/common'
+import { Role } from '@app/entities/members/role.enums'
 
 describe('RolesGuard', () => {
 	let guard: RolesGuard
@@ -18,8 +20,18 @@ describe('RolesGuard', () => {
 	it('should be defined', () => {
 		expect(guard).toBeDefined()
 	})
-	// todo change roles to numeric so that the roles can be compared.
-	it.todo('should grant access if no roles are required')
+	it('should grant access if no roles are required', () => {
+		jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(undefined)
+
+		// The context object is cast to unknown before being cast to ExecutionContext. This is a way to bypass the TypeScript compiler's type checks because it is assumed that the developer has ensured that the mock context object is correct.
+		const context = {
+			switchToHttp: () => ({ getRequest: () => ({ user: { role: Role.ADMIN } }) }),
+			getHandler: jest.fn(),
+			getClass: jest.fn(),
+		} as unknown as ExecutionContext
+
+		expect(guard.canActivate(context)).toBe(true)
+	})
 	it.todo('should grant access if user has the required role or higher')
 	it.todo('should deny access if user does not have the required role or higher')
 })
