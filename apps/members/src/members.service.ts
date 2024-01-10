@@ -13,4 +13,8 @@ export class MembersService {
 	getHello(): string {
 		return 'Hello World!'
 	}
+
+	findAll(): Member[] {
+		return []
+	}
 }
