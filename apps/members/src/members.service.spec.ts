@@ -37,6 +37,8 @@ describe('MembersService', () => {
 		describe.each([{ role: 'ROOT' }, { role: 'ADMIN' }, { role: 'CERTIFIED' }, { role: 'UNCERTIFIED' }])('when querying by role', ({ role }) => {
 			it.todo(`should return the array of members with the role of ${role}`)
 		})
+		// Phone column is not included as it contains unique values.
+		// todo change phone column to unique.
 		describe.each([
 			{
 				column: 'firstName',
@@ -50,10 +52,6 @@ describe('MembersService', () => {
 				column: 'nickname',
 				value: 'Spider-Man',
 			},
-			{
-				column: 'phone',
-				value: '01012345678',
-			},
 		])('when querying by a value of the specific column', ({ column, value }) => {
 			it.todo(`should return the array of members with the ${column} of ${value}`)
 		})
@@ -63,7 +61,6 @@ describe('MembersService', () => {
 		describe('when querying for members who has no attendance in the last quarter', () => {
 			it.todo('should return the array of members who has no attendance in the last quarter')
 		})
-		describe.each([{ key: 'attendance' }])
 		describe('when there is a database error', () => {
 			it.todo('should throw an error')
 		})
@@ -84,6 +81,21 @@ describe('MembersService', () => {
 		})
 		describe('otherwise', () => {
 			it.todo('should return the array of members')
+		})
+	})
+	describe('findOne', () => {
+		describe.each([
+			{ column: 'id', value: 'todo' },
+			{
+				column: 'phone',
+				value: '01012345678',
+			},
+		])('when querying by a value of the specific column', ({ column, value }) => {
+			it.todo(`should return the member with ${column} value of ${value}`)
+		})
+		// Each combination of nickname and lastName among members must be unique.
+		describe('when querying by nickname and lastName', () => {
+			it.todo('should return the member with the nickname and lastName')
 		})
 	})
 })
