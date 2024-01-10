@@ -90,7 +90,7 @@ describe('MembersService', () => {
 			it.todo('should not return the deleted members')
 			it.todo('should return the array of members')
 			it('should return the array of members', async () => {
-				const expectedMembers = Array.from({ length: Math.round(Math.random()) }, () => new Member())
+				const expectedMembers = Array.from({ length: Math.round(Math.random() * 10) + 1 }, () => new Member())
 				memberRepository.find.mockReturnValue(expectedMembers)
 
 				const members = await service.findAll()

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
 import { Repository } from 'typeorm'
@@ -15,6 +15,11 @@ export class MembersService {
 	}
 
 	async findAll(): Promise<Member[]> {
-		return await this.memberRepository.find()
+		const members = await this.memberRepository.find()
+		if (members.length === 0) {
+			throw new HttpException('No Content', HttpStatus.NO_CONTENT)
+		}
+
+		return members
 	}
 }
