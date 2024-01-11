@@ -99,6 +99,11 @@ describe('MembersService', () => {
 		describe('when querying for the deleted members', () => {
 			it.todo('should return the array of deleted members')
 		})
+		describe('when handling deleted members', () => {
+			it.todo('should return only non-deleted members by default')
+			it.todo('should return all members, including deleted ones, if parameter `status` is "all"')
+			it.todo('should return only deleted members if parameter `status` is "deleted"')
+		})
 		describe('otherwise', () => {
 			it.todo('should not return the deleted members')
 			it.todo('should return the array of members')
