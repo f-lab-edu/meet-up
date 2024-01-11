@@ -119,6 +119,9 @@ describe('MembersService', () => {
 		])('when querying by a value of the specific column', ({ column, value }) => {
 			it.todo(`should return the member with ${column} value of ${value}`)
 		})
+		describe('when querying without any column', () => {
+			it.todo('should throw an error')
+		})
 		// Each combination of nickname and lastName among members must be unique.
 		describe('when querying by nickname and lastName', () => {
 			it.todo('should return the member with the nickname and lastName')
