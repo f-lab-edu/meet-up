@@ -114,15 +114,6 @@ describe('MembersService', () => {
 			it.todo('should return the array of members with the pagination')
 		})
 	})
-	describe('findOne', () => {
-		describe('when querying without any column', () => {
-			it.todo('should throw an error')
-		})
-		// Each combination of nickname and lastName among members must be unique.
-		describe('when querying by nickname and lastName', () => {
-			it.todo('should return the member with the nickname and lastName')
-		})
-	})
 	describe('findAllByPhone', () => {
 		it.todo('should return members that match the given phone number prefix')
 		it.todo('should throw an exception if no members are found')
