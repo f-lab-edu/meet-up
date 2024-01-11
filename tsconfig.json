@@ -29,6 +29,12 @@
       ],
       "@app/config/*": [
         "libs/config/src/*"
+      ],
+      "@app/log": [
+        "libs/log/src"
+      ],
+      "@app/log/*": [
+        "libs/log/src/*"
       ]
     }
   }
