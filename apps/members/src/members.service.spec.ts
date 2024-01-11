@@ -4,10 +4,12 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
 import { Repository } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
+import { randomUUID } from 'crypto'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
 	find: jest.fn(),
+	findOneBy: jest.fn(),
 })
 
 describe('MembersService', () => {
@@ -125,6 +127,18 @@ describe('MembersService', () => {
 		it.todo('should return members that match the given phone number prefix')
 		it.todo('should throw an exception if no members are found')
 		it.todo('should return members sorted by attendance in descending order by default')
+	})
+	describe('findOneBy', () => {
+		describe('when querying by ID', () => {
+			it('should return the member with the ID', async () => {
+				const want = new Member()
+				want.id = randomUUID()
+				memberRepository.findOneBy.mockReturnValue(want)
+
+				const got = await service.findOneBy('id', want.id)
+				expect(got).toEqual(want)
+			})
+		})
 	})
 	describe('create', () => {
 		describe('when duplicate phone number exists', () => {
