@@ -22,4 +22,10 @@ export class MembersService {
 
 		return members
 	}
+
+	async findOne(): Promise<Member> {
+		const member = await this.memberRepository.findOne({})
+
+		return member
+	}
 }
