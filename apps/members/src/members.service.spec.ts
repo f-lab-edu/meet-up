@@ -108,6 +108,9 @@ describe('MembersService', () => {
 				expect(members).toEqual(expectedMembers)
 			})
 		})
+		describe('when querying with pagination', () => {
+			it.todo('should return the array of members with the pagination')
+		})
 	})
 	describe('findOne', () => {
 		describe('when querying without any column', () => {
