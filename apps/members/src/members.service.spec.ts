@@ -118,6 +118,11 @@ describe('MembersService', () => {
 			it.todo('should return the member with the nickname and lastName')
 		})
 	})
+	describe('findAllByPhone', () => {
+		it.todo('should return members that match the given phone number prefix')
+		it.todo('should throw an exception if no members are found')
+		it.todo('should return members sorted by attendance in descending order by default')
+	})
 	describe('create', () => {
 		describe('when duplicate phone number exists', () => {
 			it.todo('should throw an error')
