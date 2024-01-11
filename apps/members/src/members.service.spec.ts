@@ -118,6 +118,14 @@ describe('MembersService', () => {
 			},
 		])('when querying by a value of the specific column', ({ column, value }) => {
 			it.todo(`should return the member with ${column} value of ${value}`)
+			it(`should return the member with ${column} value of ${value}`, async () => {
+				const want = new Member()
+				want[column] = value
+				memberRepository.findOne.mockReturnValue(want)
+
+				const got = await service.findOne()
+				expect(got).toEqual(want)
+			})
 		})
 		describe('when querying without any column', () => {
 			it.todo('should throw an error')
