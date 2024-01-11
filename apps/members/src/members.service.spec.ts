@@ -100,7 +100,15 @@ describe('MembersService', () => {
 			it.todo('should return the array of deleted members')
 		})
 		describe('when handling deleted members', () => {
-			it.todo('should return only non-deleted members by default')
+			const activeMembers = Array.from({ length: 10 }, () => new Member()).map(m => (m.deleted_at = null))
+
+			it('should return only non-deleted members by default', async () => {
+				memberRepository.find.mockReturnValue(activeMembers)
+
+				const got = await service.findAll()
+
+				expect(got).toEqual(activeMembers)
+			})
 			it.todo('should return all members, including deleted ones, if parameter `status` is "all"')
 			it.todo('should return only deleted members if parameter `status` is "deleted"')
 		})
