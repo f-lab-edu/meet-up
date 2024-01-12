@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
-import { Repository } from 'typeorm'
+import { IsNull, Not, Repository } from 'typeorm'
 
 @Injectable()
 export class MembersService {
@@ -14,8 +14,16 @@ export class MembersService {
 		return 'Hello World!'
 	}
 
-	async findAll(): Promise<Member[]> {
-		const members = await this.memberRepository.find()
+	async findAll(status: 'active' | 'deleted' | 'all' = 'active'): Promise<Member[]> {
+		let whereClause = {}
+
+		if (status === 'active') {
+			whereClause = { deleted_at: IsNull() }
+		} else if (status === 'deleted') {
+			whereClause = { deleted_at: Not(IsNull()) }
+		}
+
+		const members = await this.memberRepository.find({ where: whereClause })
 		if (members.length === 0) {
 			throw new HttpException('No Content', HttpStatus.NO_CONTENT)
 		}
