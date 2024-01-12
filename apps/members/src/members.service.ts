@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
 import { IsNull, Not, Repository } from 'typeorm'
+import { CreateMemberDto } from './dto/create-member.dto'
 
 @Injectable()
 export class MembersService {
@@ -33,5 +34,13 @@ export class MembersService {
 
 	async findOneBy(column: keyof Member, value: any): Promise<Member> {
 		return await this.memberRepository.findOneBy({ [column]: value })
+	}
+
+	async create(dto: CreateMemberDto): Promise<Member> {
+		const member = new Member()
+
+		Object.assign(member, dto)
+
+		return await this.memberRepository.save(member)
 	}
 }
