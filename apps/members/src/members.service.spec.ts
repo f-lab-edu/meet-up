@@ -164,10 +164,6 @@ describe('MembersService', () => {
 		describe('when duplicate member with the same nickname and lastName combination exists', () => {
 			it.todo('should throw an error')
 		})
-		// todo update these 3 fields to required columns
-		describe.each(['firstName', 'lastName', 'phone'])('when %s column is missing', () => {
-			it.todo('should throw an error')
-		})
 		describe('otherwise', () => {
 			it('should create a new member', async () => {
 				const mockMemberDto = new CreateMemberDto()
