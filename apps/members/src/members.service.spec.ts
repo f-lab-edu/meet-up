@@ -5,11 +5,13 @@ import { Member } from '@app/entities/members/member.entity'
 import { IsNull, Not, Repository } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { randomUUID } from 'crypto'
+import { CreateMemberDto } from './dto/create-member.dto'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
 	find: jest.fn(),
 	findOneBy: jest.fn(),
+	save: jest.fn(),
 })
 
 describe('MembersService', () => {
@@ -167,7 +169,16 @@ describe('MembersService', () => {
 			it.todo('should throw an error')
 		})
 		describe('otherwise', () => {
-			it.todo('should create a new member')
+			it('should create a new member', async () => {
+				const mockMemberDto = new CreateMemberDto()
+
+				const returnedMember = new Member()
+
+				jest.spyOn(memberRepository, 'save').mockImplementation(() => Promise.resolve(returnedMember))
+
+				const result = await service.create(mockMemberDto)
+				expect(result).toEqual(returnedMember)
+			})
 		})
 	})
 	describe('update', () => {
