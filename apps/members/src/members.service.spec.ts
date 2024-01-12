@@ -2,7 +2,7 @@ import { MembersService } from './members.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
-import { Repository } from 'typeorm'
+import { IsNull, Not, Repository } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { randomUUID } from 'crypto'
 
@@ -100,25 +100,28 @@ describe('MembersService', () => {
 			it.todo('should return the array of deleted members')
 		})
 		describe('when handling deleted members', () => {
-			const activeMembers = Array.from({ length: 10 }, () => new Member()).map(m => (m.deleted_at = null))
-			const deletedMembers = Array.from({ length: 10 }, () => new Member()).map(m => (m.deleted_at = new Date()))
-			const allMembers = [...activeMembers, ...deletedMembers]
+			let spy: jest.SpyInstance
+
+			beforeEach(() => {
+				spy = jest.spyOn(memberRepository, 'find').mockReturnValue(Promise.resolve([new Member()]))
+			})
+
+			afterEach(() => {
+				spy.mockRestore()
+			})
 
 			it('should return only non-deleted members by default', async () => {
-				memberRepository.find.mockReturnValue(activeMembers)
-
-				const got = await service.findAll()
-
-				expect(got).toEqual(activeMembers)
+				await service.findAll()
+				expect(spy).toHaveBeenCalledWith({ where: { deleted_at: IsNull() } })
 			})
 			it('should return all members, including deleted ones, if parameter `status` is "all"', async () => {
-				memberRepository.find.mockReturnValue(allMembers)
-
-				const got = await service.findAll('all')
-
-				expect(got).toEqual(allMembers)
+				await service.findAll('all')
+				expect(spy).toHaveBeenCalledWith({ where: {} })
 			})
-			it.todo('should return only deleted members if parameter `status` is "deleted"')
+			it('should return only deleted members if parameter `status` is "deleted"', async () => {
+				await service.findAll('deleted')
+				expect(spy).toHaveBeenCalledWith({ where: { deleted_at: Not(IsNull()) } })
+			})
 		})
 		describe('otherwise', () => {
 			it.todo('should not return the deleted members')
