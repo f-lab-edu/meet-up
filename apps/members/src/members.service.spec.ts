@@ -6,6 +6,9 @@ import { IsNull, Not, Repository } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { randomUUID } from 'crypto'
 import { CreateMemberDto } from './dto/create-member.dto'
+import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
+import { ConfigModule } from '@nestjs/config'
+import Configuration from '@app/config/configuration'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -27,6 +30,7 @@ describe('MembersService', () => {
 					useValue: createMockRepository(),
 				},
 			],
+			imports: [ConfigModule.forRoot({ load: [Configuration] })],
 		}).compile()
 
 		service = module.get<MembersService>(MembersService)
@@ -162,7 +166,20 @@ describe('MembersService', () => {
 			it.todo('should throw an error')
 		})
 		describe('when duplicate member with the same nickname and lastName combination exists', () => {
-			it.todo('should throw an error')
+			it('should throw a DuplicateMemberException when using Postgres', async () => {
+				const mockMemberDto = new CreateMemberDto()
+
+				// Cast to `any` for the error to simulate a database error that includes a `code` property.
+				const duplicateError: any = new Error()
+
+				duplicateError.code = '23505'
+				jest.spyOn(memberRepository, 'save').mockRejectedValue(duplicateError)
+
+				const mockConfigService = { get: jest.fn() } as any
+				mockConfigService.get.mockReturnValue('postgres')
+
+				await expect(service.create(mockMemberDto)).rejects.toThrow(DuplicateMemberException)
+			})
 		})
 		describe('otherwise', () => {
 			it('should create a new member', async () => {
