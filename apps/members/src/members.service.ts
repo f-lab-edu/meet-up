@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
 import { IsNull, Not, Repository } from 'typeorm'
 import { CreateMemberDto } from './dto/create-member.dto'
+import { ConfigService } from '@nestjs/config'
+import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 
 @Injectable()
 export class MembersService {
 	constructor(
 		@InjectRepository(Member)
 		private readonly memberRepository: Repository<Member>,
+		private readonly configService: ConfigService,
 	) {}
 
 	getHello(): string {
@@ -38,9 +41,23 @@ export class MembersService {
 
 	async create(dto: CreateMemberDto): Promise<Member> {
 		const member = new Member()
-
 		Object.assign(member, dto)
 
-		return await this.memberRepository.save(member)
+		try {
+			return await this.memberRepository.save(member)
+		} catch (error) {
+			if (this.configService.get('database') === 'postgres') {
+				if (error.code === '23505') {
+					throw new DuplicateMemberException()
+				} else {
+					// todo refactor using logging service
+					console.error(`An unexpected error occurred while creating a member using Postgres: ${error.message}`)
+				}
+			} else {
+				console.error(`A database error occurred while creating a member, and the error handling for the current DBMS type is not implemented yet`)
+			}
+			// todo handle unhandled error
+			throw error
+		}
 	}
 }
