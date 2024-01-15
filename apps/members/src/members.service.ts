@@ -7,6 +7,10 @@ import { ConfigService } from '@nestjs/config'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 import { UpdateMemberDto } from './dto/update-member.dto'
 
+interface DatabaseError extends Error {
+	code?: string
+}
+
 @Injectable()
 export class MembersService {
 	constructor(
@@ -47,18 +51,7 @@ export class MembersService {
 		try {
 			return await this.memberRepository.save(member)
 		} catch (error) {
-			if (this.configService.get('database') === 'postgres') {
-				if (error.code === '23505') {
-					throw new DuplicateMemberException()
-				} else {
-					// todo refactor using logging service
-					console.error(`An unexpected error occurred while creating a member using Postgres: ${error.message}`)
-				}
-			} else {
-				console.error(`A database error occurred while creating a member, and the error handling for the current DBMS type is not implemented yet`)
-			}
-			// todo handle unhandled error
-			throw error
+			this.handleMemberExceptions(error)
 		}
 	}
 
@@ -67,16 +60,20 @@ export class MembersService {
 			await this.memberRepository.update(id, dto)
 			return
 		} catch (error) {
-			if (this.configService.get('database') === 'postgres') {
-				if (error.code === '23505') {
-					throw new DuplicateMemberException()
-				} else {
-					console.error(`An unexpected error occurred while updating a member using Postgres: ${error.message}`)
-				}
-			} else {
-				console.error(`A database error occurred while updating a member, and the error handling for the current DBMS type is not implemented yet`)
-			}
-			throw error
+			this.handleMemberExceptions(error)
 		}
+	}
+
+	private handleMemberExceptions(error: DatabaseError) {
+		if (this.configService.get('database') === 'postgres') {
+			if (error.code === '23505') {
+				throw new DuplicateMemberException()
+			} else {
+				console.error(`An unexpected error occurred while updating a member using Postgres: ${error.message}`)
+			}
+		} else {
+			console.error(`A database error occurred while updating a member, and the error handling for the current DBMS type is not implemented yet`)
+		}
+		throw error
 	}
 }
