@@ -1,19 +1,15 @@
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
+import { MemberDto } from './member.dto'
 
-export class CreateMemberDto {
-	@IsString()
+export class CreateMemberDto extends MemberDto {
 	@IsNotEmpty()
 	firstName: string
 
-	@IsString()
 	@IsNotEmpty()
 	lastName: string
 
-	@Matches(/^[A-Za-zÀ-ÖØ-öø-ÿ ]*$/, { message: 'Nickname can only contain alphabetic characters.' })
-	@IsString()
 	nickname: string
 
-	@Matches(/^01\d{8,9}$/, { message: 'Provide a valid Korean mobile phone number.' })
-	@IsOptional()
+	@IsNotEmpty()
 	phone: string
 }
