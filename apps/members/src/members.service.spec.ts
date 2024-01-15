@@ -1,7 +1,7 @@
 import { MembersService } from './members.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { Member } from '@app/entities/members/member.entity'
+import { Member, MemberRole } from '@app/entities/members/member.entity'
 import { IsNull, Not, Repository } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { randomUUID } from 'crypto'
@@ -233,7 +233,14 @@ describe('MembersService', () => {
 			it.todo('should throw a MemberNotFoundException')
 		})
 		describe('otherwise', () => {
-			it.todo('should update the role of the member')
+			it('should update the role of the member', async () => {
+				const memberId = randomUUID()
+				const role = MemberRole.CERTIFIED
+
+				await service.updateRole(memberId, role)
+
+				expect(memberRepository.update).toHaveBeenCalledWith(memberId, { role })
+			})
 		})
 	})
 	describe('delete', () => {
