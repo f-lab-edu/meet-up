@@ -207,6 +207,14 @@ describe('MembersService', () => {
 			it.todo('should update the member')
 		})
 	})
+	describe('updateRole', () => {
+		describe('when the provided ID does not exist in the database', () => {
+			it.todo('should throw a MemberNotFoundException')
+		})
+		describe('otherwise', () => {
+			it.todo('should update the role of the member')
+		})
+	})
 	describe('delete', () => {
 		describe('when the member is already deleted', () => {
 			it.todo('should throw an error')
