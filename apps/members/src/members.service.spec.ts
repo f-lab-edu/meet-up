@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config'
 import Configuration from '@app/config/configuration'
 import { UpdateMemberDto } from './dto/update-member.dto'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
+import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -230,6 +231,15 @@ describe('MembersService', () => {
 		})
 	})
 	describe('updateRole', () => {
+		describe('when trying to update to a non-adjacent role', () => {
+			it('should throw a NonSequentialRoleUpdateException', async () => {
+				const memberId = randomUUID()
+				const currentRole = MemberRole.UNCERTIFIED
+				const targetRole = MemberRole.ADMIN
+
+				await expect(service.updateRole(memberId, currentRole, targetRole)).rejects.toThrow(NonSequentialRoleUpdateException)
+			})
+		})
 		describe('when the provided ID does not exist in the database', () => {
 			it('should throw a MemberNotFoundException', async () => {
 				const memberId = randomUUID()
@@ -250,6 +260,7 @@ describe('MembersService', () => {
 		})
 	})
 	describe('delete', () => {
+		describe('when deleting a member, its role must become null')
 		describe('when the member is already deleted', () => {
 			it.todo('should throw an error')
 		})
