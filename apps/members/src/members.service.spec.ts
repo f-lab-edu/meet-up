@@ -205,6 +205,24 @@ describe('MembersService', () => {
 		describe.each(['id', 'role', 'attendances'])('when trying to update the column %s', () => {
 			it.todo('should throw an error')
 		})
+		describe('when duplicate member exists', () => {
+			it('should throw a DuplicateMemberException when using Postgres', async () => {
+				const updateMemberDto = new UpdateMemberDto()
+
+				// Cast to `any` for the error to simulate a database error that includes a `code` property.
+				const duplicateError: any = new Error()
+
+				duplicateError.code = '23505'
+				jest.spyOn(memberRepository, 'update').mockRejectedValue(duplicateError)
+
+				const mockConfigService = { get: jest.fn() } as any
+				mockConfigService.get.mockReturnValue('postgres')
+
+				const memberId = randomUUID()
+
+				await expect(service.update(memberId, updateMemberDto)).rejects.toThrow(DuplicateMemberException)
+			})
+		})
 		describe('otherwise', () => {
 			it('should update the member', async () => {
 				const updateMemberDto = new UpdateMemberDto()
