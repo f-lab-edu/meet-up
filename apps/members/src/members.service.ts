@@ -5,6 +5,7 @@ import { IsNull, Not, Repository } from 'typeorm'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { ConfigService } from '@nestjs/config'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
+import { UpdateMemberDto } from './dto/update-member.dto'
 
 @Injectable()
 export class MembersService {
@@ -59,5 +60,9 @@ export class MembersService {
 			// todo handle unhandled error
 			throw error
 		}
+	}
+
+	async update(id: string, dto: UpdateMemberDto): Promise<void> {
+		await this.memberRepository.update(id, dto)
 	}
 }
