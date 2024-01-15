@@ -63,6 +63,20 @@ export class MembersService {
 	}
 
 	async update(id: string, dto: UpdateMemberDto): Promise<void> {
-		await this.memberRepository.update(id, dto)
+		try {
+			await this.memberRepository.update(id, dto)
+			return
+		} catch (error) {
+			if (this.configService.get('database') === 'postgres') {
+				if (error.code === '23505') {
+					throw new DuplicateMemberException()
+				} else {
+					console.error(`An unexpected error occurred while updating a member using Postgres: ${error.message}`)
+				}
+			} else {
+				console.error(`A database error occurred while updating a member, and the error handling for the current DBMS type is not implemented yet`)
+			}
+			throw error
+		}
 	}
 }
