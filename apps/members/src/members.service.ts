@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Member } from '@app/entities/members/member.entity'
+import { Member, MemberRole } from '@app/entities/members/member.entity'
 import { IsNull, Not, Repository } from 'typeorm'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { ConfigService } from '@nestjs/config'
@@ -62,6 +62,10 @@ export class MembersService {
 		} catch (error) {
 			this.handleMemberExceptions(error)
 		}
+	}
+
+	async updateRole(id: string, role: MemberRole): Promise<void> {
+		await this.memberRepository.update(id, { role })
 	}
 
 	private handleMemberExceptions(error: DatabaseError) {
