@@ -9,12 +9,14 @@ import { CreateMemberDto } from './dto/create-member.dto'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 import { ConfigModule } from '@nestjs/config'
 import Configuration from '@app/config/configuration'
+import { UpdateMemberDto } from './dto/update-member.dto'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
 	find: jest.fn(),
 	findOneBy: jest.fn(),
 	save: jest.fn(),
+	update: jest.fn(),
 })
 
 describe('MembersService', () => {
@@ -204,7 +206,15 @@ describe('MembersService', () => {
 			it.todo('should throw an error')
 		})
 		describe('otherwise', () => {
-			it.todo('should update the member')
+			it('should update the member', async () => {
+				const updateMemberDto = new UpdateMemberDto()
+
+				const memberId = randomUUID()
+
+				await service.update(memberId, updateMemberDto)
+
+				expect(memberRepository.update).toHaveBeenCalledWith(memberId, updateMemberDto)
+			})
 		})
 	})
 	describe('updateRole', () => {
