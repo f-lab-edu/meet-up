@@ -195,13 +195,6 @@ describe('MembersService', () => {
 		})
 	})
 	describe('update', () => {
-		// todo 질문: transaction 을 통해서 find -> 없으면 update 하는게 나은지 아니면 update 에서 검사해주는게 나은지
-		describe('when updating phone number which is duplicate', () => {
-			it.todo('should throw an error')
-		})
-		describe('when updating either nickname, lastName, or both, the resulting combination must no create a duplicate', () => {
-			it.todo('should throw an error')
-		})
 		describe.each(['id', 'role', 'attendances'])('when trying to update the column %s', () => {
 			it.todo('should throw an error')
 		})
