@@ -162,10 +162,8 @@ describe('MembersService', () => {
 		})
 	})
 	describe('create', () => {
-		describe('when duplicate phone number exists', () => {
-			it.todo('should throw an error')
-		})
-		describe('when duplicate member with the same nickname and lastName combination exists', () => {
+		// Todo: In E2E test, add 'nickname and lastName combination' and 'phone' duplicate test.
+		describe('when duplicate member exists', () => {
 			it('should throw a DuplicateMemberException when using Postgres', async () => {
 				const mockMemberDto = new CreateMemberDto()
 
