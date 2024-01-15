@@ -10,6 +10,7 @@ import { DuplicateMemberException } from '@app/exceptions/duplicate-member.excep
 import { ConfigModule } from '@nestjs/config'
 import Configuration from '@app/config/configuration'
 import { UpdateMemberDto } from './dto/update-member.dto'
+import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -230,7 +231,12 @@ describe('MembersService', () => {
 	})
 	describe('updateRole', () => {
 		describe('when the provided ID does not exist in the database', () => {
-			it.todo('should throw a MemberNotFoundException')
+			it('should throw a MemberNotFoundException', async () => {
+				const memberId = randomUUID()
+				const role = MemberRole.CERTIFIED
+
+				await expect(service.updateRole(memberId, role)).rejects.toThrow(MemberNotFoundException)
+			})
 		})
 		describe('otherwise', () => {
 			it('should update the role of the member', async () => {
