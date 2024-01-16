@@ -17,6 +17,7 @@ import { Role } from '@app/entities/members/role.enums'
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
 	find: jest.fn(),
+	findOne: jest.fn(),
 	findOneBy: jest.fn(),
 	save: jest.fn(),
 	update: jest.fn(),
@@ -234,34 +235,46 @@ describe('MembersService', () => {
 	describe('updateRole', () => {
 		describe('when trying to update to a non-adjacent role', () => {
 			it('should throw a NonSequentialRoleUpdateException', async () => {
-				const memberId = randomUUID()
-				const currentRole = MemberRole.UNCERTIFIED
-				const targetRole = MemberRole.ADMIN
+				const member = new Member()
+				member.role = Role.ADMIN
 
-				await expect(service.updateRole(memberId, currentRole, targetRole)).rejects.toThrow(NonSequentialRoleUpdateException)
+				const targetRole = Role.UNCERTIFIED
+				const memberId = randomUUID()
+
+				jest.spyOn(memberRepository, 'findOne').mockResolvedValue(member)
+
+				await expect(service.updateRole(memberId, targetRole)).rejects.toThrow(NonSequentialRoleUpdateException)
 			})
 		})
 		describe('when the provided ID does not exist in the database', () => {
 			it('should throw a MemberNotFoundException', async () => {
 				const memberId = randomUUID()
-				const role = MemberRole.CERTIFIED
+				const role = Role.CERTIFIED
+
+				jest.spyOn(memberRepository, 'findOne').mockResolvedValue(undefined)
 
 				await expect(service.updateRole(memberId, role)).rejects.toThrow(MemberNotFoundException)
 			})
 		})
 		describe('otherwise', () => {
 			it('should update the role of the member', async () => {
+				const member = new Member()
+				member.role = Role.CERTIFIED
+
+				const targetRole = Role.ADMIN
 				const memberId = randomUUID()
-				const role = MemberRole.CERTIFIED
 
-				await service.updateRole(memberId, role)
+				jest.spyOn(memberRepository, 'findOne').mockReturnValue(member)
+				await service.updateRole(memberId, targetRole)
 
-				expect(memberRepository.update).toHaveBeenCalledWith(memberId, { role })
+				expect(memberRepository.update).toHaveBeenCalledWith(memberId, { role: targetRole })
 			})
 		})
 	})
 	describe('delete', () => {
-		describe('when deleting a member, its role must become null')
+		describe('when deleting a member, its role must become null', () => {
+			it.todo('should update the role of the member to null')
+		})
 		describe('when the member is already deleted', () => {
 			it.todo('should throw an error')
 		})
