@@ -1,7 +1,7 @@
-import { MemberRole } from '@app/entities/members/member.entity'
+import { Role } from '@app/entities/members/role.enums'
 
 export class NonSequentialRoleUpdateException extends Error {
-	constructor(currentRole: MemberRole, attemptedRole: MemberRole) {
+	constructor(currentRole: Role, attemptedRole: Role) {
 		super(`Cannot update from the current role '${currentRole}' directly to the role '${attemptedRole}' as they are non-adjacent roles.`)
 		// This line below is needed to preserve the correct stack trace in the error message.
 		// It sets the prototype explicitly.

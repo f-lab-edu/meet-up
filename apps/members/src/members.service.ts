@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Member, MemberRole } from '@app/entities/members/member.entity'
+import { Member } from '@app/entities/members/member.entity'
 import { IsNull, Not, Repository } from 'typeorm'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { ConfigService } from '@nestjs/config'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 import { UpdateMemberDto } from './dto/update-member.dto'
+import { Role } from '@app/entities/members/role.enums'
 
 interface DatabaseError extends Error {
 	code?: string
@@ -64,7 +65,7 @@ export class MembersService {
 		}
 	}
 
-	async updateRole(id: string, role: MemberRole): Promise<void> {
+	async updateRole(id: string, role: Role): Promise<void> {
 		await this.memberRepository.update(id, { role })
 	}
 
