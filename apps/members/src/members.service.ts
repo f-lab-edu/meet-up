@@ -7,6 +7,8 @@ import { ConfigService } from '@nestjs/config'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 import { UpdateMemberDto } from './dto/update-member.dto'
 import { Role } from '@app/entities/members/role.enums'
+import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
+import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 
 interface DatabaseError extends Error {
 	code?: string
@@ -66,6 +68,18 @@ export class MembersService {
 	}
 
 	async updateRole(id: string, role: Role): Promise<void> {
+		// todo refactor updateRole method to use transaction
+
+		const MAX_ROLE_DIFF = 1
+
+		const member = await this.memberRepository.findOne({ where: { id } })
+		if (!member) {
+			throw new MemberNotFoundException(id)
+		}
+		if (Math.abs(member.role - role) > MAX_ROLE_DIFF) {
+			throw new NonSequentialRoleUpdateException(member.role, role)
+		}
+
 		await this.memberRepository.update(id, { role })
 	}
 
