@@ -279,7 +279,12 @@ describe('MembersService', () => {
 			it.todo('should throw an error')
 		})
 		describe('otherwise', () => {
-			it.todo('should delete the member')
+			it('should delete the member', async () => {
+				const memberId = randomUUID()
+
+				await service.delete(memberId)
+				expect(memberRepository.update).toHaveBeenCalledWith(memberId, { deleted_at: new Date() })
+			})
 		})
 	})
 })
