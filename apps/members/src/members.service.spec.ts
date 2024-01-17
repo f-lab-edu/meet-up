@@ -273,9 +273,6 @@ describe('MembersService', () => {
 		})
 	})
 	describe('delete', () => {
-		describe('when deleting a member, its role must become null', () => {
-			it.todo('should update the role of the member to null')
-		})
 		describe('when the member is already deleted', () => {
 			it('should throw MemberRedundantDeletionException', async () => {
 				const member = new Member()
@@ -288,7 +285,7 @@ describe('MembersService', () => {
 			})
 		})
 		describe('otherwise', () => {
-			it('should delete the member', async () => {
+			it('should assign the current timestamp to `deleted_at` and set the `role` as null', async () => {
 				const member = new Member()
 				const memberId = randomUUID()
 				member.id = memberId
@@ -296,7 +293,7 @@ describe('MembersService', () => {
 
 				jest.spyOn(memberRepository, 'findOne').mockReturnValue(member)
 				await service.delete(memberId)
-				expect(memberRepository.update).toHaveBeenCalledWith(memberId, { deleted_at: new Date() })
+				expect(memberRepository.update).toHaveBeenCalledWith(memberId, { deleted_at: new Date(), role: null })
 			})
 		})
 	})

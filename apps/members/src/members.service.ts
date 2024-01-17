@@ -92,7 +92,7 @@ export class MembersService {
 			throw new MemberRedundantDeletionException(id)
 		}
 
-		await this.memberRepository.update(id, { deleted_at: new Date() })
+		await this.memberRepository.update(id, { deleted_at: new Date(), role: null })
 	}
 
 	private handleMemberExceptions(error: DatabaseError) {
