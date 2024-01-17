@@ -83,6 +83,10 @@ export class MembersService {
 		await this.memberRepository.update(id, { role })
 	}
 
+	async delete(id: string): Promise<void> {
+		await this.memberRepository.update(id, { deleted_at: new Date() })
+	}
+
 	private handleMemberExceptions(error: DatabaseError) {
 		if (this.configService.get('database') === 'postgres') {
 			if (error.code === '23505') {
