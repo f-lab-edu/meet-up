@@ -107,7 +107,7 @@ describe('MembersService', () => {
 			it.todo('should return the array of members who is participating the upcoming meeting')
 		})
 		describe('when querying for members who has participated the last meeting', () => {
-			it.todo('should return the array of members who has participated the last meeting')
+			it.todo('should return the array of members who has participated the lastf meeting')
 		})
 		describe('when querying for the deleted members', () => {
 			it.todo('should return the array of deleted members')
@@ -290,6 +290,9 @@ describe('MembersService', () => {
 				const memberId = randomUUID()
 				member.id = memberId
 				member.deleted_at = null
+
+				const mockDate = new Date()
+				global.Date = jest.fn(() => mockDate) as any
 
 				jest.spyOn(memberRepository, 'findOne').mockReturnValue(member)
 				await service.delete(memberId)
