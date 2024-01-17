@@ -303,7 +303,7 @@ Resources:
               awslogs-group: !Ref TaskDefinitionLogGroup
               awslogs-stream-prefix: test # todo use Container's name
               awslogs-region: !Ref AWS::Region
-          PortMapping:
+          PortMappings:
             - ContainerPort: 80
               HostPort: 80
               Protocol: tcp
