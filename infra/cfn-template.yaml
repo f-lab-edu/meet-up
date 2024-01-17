@@ -284,3 +284,58 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 7
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Cpu: 256
+      Memory: 512
+      ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
+      TaskRoleArn: !GetAtt [ TaskRole, Arn ]
+      RequiresCompatibilities:
+        - FARGATE
+      NetworkMode: awsvpc
+      ContainerDefinitions:
+        - Name: test # todo use parameter
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EcrRepository}:latest
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref TaskDefinitionLogGroup
+              awslogs-stream-prefix: test # todo use Container's name
+              awslogs-region: !Ref AWS::Region
+          PortMapping:
+            - ContainerPort: 80
+              HostPort: 80
+              Protocol: tcp
+  ServiceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Only allow traffics from Application Load Balancer Security Group.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref ApplicationLoadBalancerSecurityGroup
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - ApplicationLoadBalancer
+    Properties:
+      Cluster: !Ref EcsCluster
+      LaunchType: FARGATE
+      DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition
+      HealthCheckGracePeriodSeconds: 60
+      LoadBalancers:
+        - ContainerName: test # todo use parameter
+          ContainerPort: 80
+          TargetGroupArn: !GetAtt [ TargetGroup, TargetGroupArn ]
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+            - !Ref AppSubnet1
+            - !Ref AppSubnet2
+          SecurityGroups:
+            - !Ref ServiceSecurityGroup
