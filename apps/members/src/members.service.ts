@@ -9,6 +9,7 @@ import { UpdateMemberDto } from './dto/update-member.dto'
 import { Role } from '@app/entities/members/role.enums'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
+import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
 
 interface DatabaseError extends Error {
 	code?: string
@@ -84,6 +85,13 @@ export class MembersService {
 	}
 
 	async delete(id: string): Promise<void> {
+		// todo refactor delete method to use transaction
+
+		const member = await this.memberRepository.findOne({ where: { id } })
+		if (member.deleted_at) {
+			throw new MemberRedundantDeletionException(id)
+		}
+
 		await this.memberRepository.update(id, { deleted_at: new Date() })
 	}
 

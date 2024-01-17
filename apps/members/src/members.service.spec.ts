@@ -13,6 +13,7 @@ import { UpdateMemberDto } from './dto/update-member.dto'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 import { Role } from '@app/entities/members/role.enums'
+import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -276,12 +277,24 @@ describe('MembersService', () => {
 			it.todo('should update the role of the member to null')
 		})
 		describe('when the member is already deleted', () => {
-			it.todo('should throw an error')
+			it('should throw MemberRedundantDeletionException', async () => {
+				const member = new Member()
+				const memberId = randomUUID()
+				member.deleted_at = new Date()
+				member.id = memberId
+
+				jest.spyOn(memberRepository, 'findOne').mockReturnValue(member)
+				await expect(service.delete(memberId)).rejects.toThrow(MemberRedundantDeletionException)
+			})
 		})
 		describe('otherwise', () => {
 			it('should delete the member', async () => {
+				const member = new Member()
 				const memberId = randomUUID()
+				member.id = memberId
+				member.deleted_at = null
 
+				jest.spyOn(memberRepository, 'findOne').mockReturnValue(member)
 				await service.delete(memberId)
 				expect(memberRepository.update).toHaveBeenCalledWith(memberId, { deleted_at: new Date() })
 			})
