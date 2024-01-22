@@ -4,6 +4,8 @@ import { MembersService } from './members.service'
 import { Repository } from 'typeorm'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
+import { ConfigModule } from '@nestjs/config'
+import Configuration from '@app/config/configuration'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({})
@@ -20,6 +22,7 @@ describe('MembersController', () => {
 					useValue: createMockRepository(),
 				},
 			],
+			imports: [ConfigModule.forRoot({ load: [Configuration] })],
 		}).compile()
 
 		membersController = app.get<MembersController>(MembersController)

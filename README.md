@@ -16,6 +16,78 @@ docker compose up
 
 *TBD*
 
+# Test-Driven Development
+
+Test-Driven Development (TDD) plays a significant role in this project's development process. It's employed throughout
+the entirety of the application's construction, focusing on small, incrementally developed components, each accompanied
+by their own tests.
+
+Some techniques have been utilized for testing in this project.
+
+## Mocking a function's behavior
+
+```TypeScript
+// ...
+describe('findAll', () => {
+  describe('when there is no record in members table', () => {
+    it('should throw HttpException 204', async () => {
+      const want = []
+      memberRepository.find.mockReturnValue(want)
+
+      try {
+        await service.findAll()
+      } catch (error) {
+        expect(error).toBeInstanceOf(HttpException)
+        expect(error.getStatus()).toBe(HttpStatus.NO_CONTENT)
+      }
+    })
+  })
+  // ...
+})
+```
+
+In this scenario, `memberRepository.find` is mocked to return a specific value. This allows us to examine how the
+findAll method handles the outcome of this repository function.
+
+## Spying
+
+Spying allow us to observe the interaction among components in the system without altering their behavior.
+
+```TypeScript
+describe('findAll', () => {
+  // ...
+  describe('when handling deleted members', () => {
+    let spy: jest.SpyInstance
+
+    beforeEach(() => {
+      spy = jest.spyOn(memberRepository, 'find').mockReturnValue(Promise.resolve([new Member()]))
+    })
+
+    afterEach(() => {
+      spy.mockRestore()
+    })
+
+    it('should return only non-deleted members by default', async () => {
+      await service.findAll()
+      expect(spy).toHaveBeenCalledWith({ where: { deleted_at: IsNull() } })
+    })
+    it('should return all members, including deleted ones, if parameter `status` is "all"', async () => {
+      await service.findAll('all')
+      expect(spy).toHaveBeenCalledWith({ where: {} })
+    })
+    it('should return only deleted members if parameter `status` is "deleted"', async () => {
+      await service.findAll('deleted')
+      expect(spy).toHaveBeenCalledWith({ where: { deleted_at: Not(IsNull()) } })
+    })
+  })
+  // ...
+})
+```
+
+In these tests, spying is used to verify whether the `findAll` method in the members service is accurately creating the
+where clause, which is subsequently passed to the repository method. As the result of the repository method isn't a
+primary concern of the service layer, we focus on spying on the parameters rather than mocking the method itself.
+
 # Logging
 
 Logging on HTTP `request` and `response` is implemented as a *Middleware function* and followed the official course.

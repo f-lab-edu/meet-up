@@ -6,7 +6,7 @@ import { Role } from '@app/entities/members/role.enums'
 @Entity('members')
 export class Member extends AbstractEntity {
 	@PrimaryGeneratedColumn('uuid')
-	id: number
+	id: string
 
 	@Column({
 		type: 'enum',
