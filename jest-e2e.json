@@ -16,5 +16,6 @@
     "^@app/log(|/.*)$": "<rootDir>/libs/log/src/$1",
     "^@app/auth(|/.*)$": "<rootDir>/libs/auth/src/$1",
     "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/$1"
-  }
+  },
+  "globalSetup": "<rootDir>/test/e2e/setup.ts"
 }
