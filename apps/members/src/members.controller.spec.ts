@@ -30,7 +30,7 @@ describe('MembersController', () => {
 
 	describe('root', () => {
 		it('should return "Hello World!"', () => {
-			expect(membersController.getHello()).toBe('Hello World!')
+			expect(membersController.getMember()).toBe('Hello World!')
 		})
 	})
 })
