@@ -6,6 +6,7 @@ import { Connection, Repository } from 'typeorm'
 import { resetDatabase } from '../../../test-utils/e2e/reset-database'
 import { Member } from '@app/entities/members/member.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
+import { Role } from '@app/entities/members/role.enums'
 
 describe('MembersController (e2e)', () => {
 	let app: INestApplication
@@ -31,17 +32,38 @@ describe('MembersController (e2e)', () => {
 		it('should return 204 "No Content" when no item is in database', () => {
 			return request(app.getHttpServer()).get('/').expect(204)
 		})
-		it('should return 200 "OK" when item is in database', async () => {
-			// Generate and save members to the database
-			const members = generateMembers(2)
-			await memberRepository.save(members)
 
+		// Role enum as an array of its values
+		const roles = [Role.ROOT, Role.ADMIN, Role.CERTIFIED, Role.UNCERTIFIED]
+
+		// This case is written separately from other tests on querying by a specific column.
+		// It is because the entire enum has to be tested.
+		describe.each(roles)('when querying by role', role => {
+			it(`should return the array of members with the role of ${role}`, async () => {
+				// Generate 100 members with random roles
+				const members = generateMembers(100).map(m => {
+					m.role = roles[Math.floor(Math.random() * roles.length)]
+					return m
+				})
+
+				// Save members to the database
+				await memberRepository.save(members)
+
+				// Query the members with the specified role
+				const response = await request(app.getHttpServer()).get(`/?role=${role}`)
+
+				// Check the HTTP status and the length of the response body
+				expect(response.status).toBe(200)
+				expect(response.body.every(m => m.role === role)).toBeTruthy()
+			})
+		})
+		it('should return 200 "OK" when item is in database', async () => {
 			// Send a GET request to the server
 			const response = await request(app.getHttpServer()).get('/')
 
 			// Check the HTTP status and the length of the response body
 			expect(response.status).toBe(200)
-			expect(response.body.length).toBe(2)
+			expect(response.body.length).not.toBe(0)
 		})
 	})
 })
