@@ -3,15 +3,14 @@ import { MembersService } from './members.service'
 import { Member } from '@app/entities/members/member.entity'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { UpdateMemberDto } from './dto/update-member.dto'
-import { Role } from '@app/entities/members/role.enums'
 
 @Controller()
 export class MembersController {
 	constructor(private readonly membersService: MembersService) {}
 
 	@Get()
-	getMembers(@Query('role') role?: Role): Promise<Member[]> {
-		return this.membersService.findAll('active', role)
+	getMembers(@Query() filters: { [K in keyof Member]?: Member[K] }): Promise<Member[]> {
+		return this.membersService.findAll('active', filters)
 	}
 
 	@Get('/:id')

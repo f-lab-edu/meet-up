@@ -54,6 +54,38 @@ describe('MembersController (e2e)', () => {
 				expect(response.body.every(m => m.role === role)).toBeTruthy()
 			})
 		})
+
+		type ColumnValuePair = {
+			column: keyof Member
+			value: any // Can be any valid value for a member's column
+		}
+
+		describe.each<ColumnValuePair>([
+			{
+				column: 'firstName',
+				value: 'First50', // value from generateMembers function
+			},
+			{
+				column: 'lastName',
+				value: 'Last50', // value from generateMembers function
+			},
+			{
+				column: 'nickname',
+				value: 'Nickname50', // value from generateMembers function
+			},
+			// Add more filters as needed
+		])('when querying by a specific column', ({ column, value }) => {
+			it(`should return the array of members with the ${column} of ${value}`, async () => {
+				// Send a GET request with the filter to the server
+				const response = await request(app.getHttpServer()).get(`/?${column}=${value}`)
+
+				// Check the HTTP status
+				expect(response.status).toBe(200)
+
+				// Check if all members in the response have the expected value for the specified column
+				expect(response.body.every((m: Member) => m[column] === value)).toBeTruthy()
+			})
+		})
 		it('should return 200 "OK" when item is in database', async () => {
 			// Send a GET request to the server
 			const response = await request(app.getHttpServer()).get('/')
