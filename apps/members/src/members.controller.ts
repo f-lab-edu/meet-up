@@ -1,16 +1,17 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common'
 import { MembersService } from './members.service'
 import { Member } from '@app/entities/members/member.entity'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { UpdateMemberDto } from './dto/update-member.dto'
+import { Role } from '@app/entities/members/role.enums'
 
 @Controller()
 export class MembersController {
 	constructor(private readonly membersService: MembersService) {}
 
 	@Get()
-	getMembers(): Promise<Member[]> {
-		return this.membersService.findAll()
+	getMembers(@Query('role') role?: Role): Promise<Member[]> {
+		return this.membersService.findAll('active', role)
 	}
 
 	@Get('/:id')

@@ -27,13 +27,17 @@ export class MembersService {
 		return 'Hello World!'
 	}
 
-	async findAll(status: 'active' | 'deleted' | 'all' = 'active'): Promise<Member[]> {
-		let whereClause = {}
+	async findAll(status: 'active' | 'deleted' | 'all' = 'active', role?: Role): Promise<Member[]> {
+		let whereClause: any = {}
 
 		if (status === 'active') {
 			whereClause = { deleted_at: IsNull() }
 		} else if (status === 'deleted') {
 			whereClause = { deleted_at: Not(IsNull()) }
+		}
+
+		if (role !== undefined) {
+			whereClause.role = role
 		}
 
 		const members = await this.memberRepository.find({ where: whereClause })

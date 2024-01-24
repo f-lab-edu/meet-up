@@ -12,7 +12,7 @@ import Configuration from '@app/config/configuration'
 import { UpdateMemberDto } from './dto/update-member.dto'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
-import { Role } from '@app/entities/members/role.enums'
+import { Role, roles } from '@app/entities/members/role.enums'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
@@ -62,10 +62,24 @@ describe('MembersService', () => {
 				}
 			})
 		})
-		// This case is written separately from other tests on querying by a specific column.
-		// It is because the entire enum has to be tested.
-		describe.each([{ role: 'ROOT' }, { role: 'ADMIN' }, { role: 'CERTIFIED' }, { role: 'UNCERTIFIED' }])('when querying by role', ({ role }) => {
-			it.todo(`should return the array of members with the role of ${role}`)
+		describe.each(roles)('when querying by roles %s', role => {
+			it('should return array of members with that role', async () => {
+				// Given
+				const expectedMembers = [{ ...new Member(), role }]
+				memberRepository.find.mockResolvedValue(expectedMembers)
+
+				// When
+				const members = await service.findAll('active', role)
+
+				// Then
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						role,
+					},
+				})
+			})
 		})
 		// Phone column is not included as it contains unique values.
 		// todo change phone column to unique.
