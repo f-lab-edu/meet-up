@@ -86,14 +86,74 @@ describe('MembersController (e2e)', () => {
 				expect(response.body.every((m: Member) => m[column] === value)).toBeTruthy()
 			})
 		})
-		it('should return 200 "OK" when item is in database', async () => {
-			// Send a GET request to the server
-			const response = await request(app.getHttpServer()).get('/')
+		describe('when querying by creation date', () => {
+			let members: Member[]
+			const afterDate = '1991-07-01'
+			const beforeDate = '2000-07-01'
 
-			// Check the HTTP status and the length of the response body
-			expect(response.status).toBe(200)
-			expect(response.body.length).not.toBe(0)
+			// Fetch existing members from the database and update their created_at date before the tests.
+
+			beforeAll(async () => {
+				members = await memberRepository.find()
+				// Set created_at dates based on groupings for the members
+				for (const [i, m] of members.entries()) {
+					switch (i % 3) {
+						case 0:
+							m.created_at = new Date('1990-01-01')
+							break
+						case 1:
+							m.created_at = new Date('2000-01-01')
+							break
+						case 2:
+							m.created_at = new Date('2010-01-01')
+					}
+				}
+				await memberRepository.save(members)
+			})
+			it('should return the array of members created after the provided date', async () => {
+				// Got
+				const response = await request(app.getHttpServer()).get('/').query({ created_after: afterDate })
+
+				// Assert
+				expect(response.status).toBe(200)
+				expect(response.body.every((m: Member) => new Date(m.created_at).getTime() > new Date(afterDate).getTime())).toBeTruthy()
+			})
+			it('should return the array of members created before the provided date', async () => {
+				// Got
+				const response = await request(app.getHttpServer()).get('/').query({
+					created_before: beforeDate,
+				})
+
+				// Assert
+				expect(response.status).toBe(200)
+				expect(response.body.every((m: Member) => new Date(m.created_at).getTime() < new Date(beforeDate).getTime())).toBeTruthy()
+			})
+			it('should return the array of members created between the provided dates', async () => {
+				// Got
+				const response = await request(app.getHttpServer()).get('/').query({
+					created_after: afterDate,
+					created_before: beforeDate,
+				})
+
+				// Assert
+				expect(response.status).toBe(200)
+				expect(
+					response.body.every(
+						(m: Member) =>
+							new Date(m.created_at).getTime() > new Date(afterDate).getTime() &&
+							new Date(m.created_at).getTime() < new Date(beforeDate).getTime(),
+					),
+				).toBeTruthy()
+			})
 		})
+	})
+	it('should return 200 "OK" when item is in database', async () => {
+		// Send a GET request to the server
+		const response = await request(app.getHttpServer()).get('/')
+
+		// Check the HTTP status and the length of the response body
+		expect(response.status).toBe(200)
+		expect(response.body.length).not.toBe(0)
 	})
 })
 
