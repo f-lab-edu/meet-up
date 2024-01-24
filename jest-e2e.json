@@ -17,6 +17,6 @@
     "^@app/auth(|/.*)$": "<rootDir>/libs/auth/src/$1",
     "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/$1"
   },
-  "globalSetup": "<rootDir>/test/e2e/setup.ts",
-  "globalTeardown": "<rootDir>/test/e2e/teardown.ts"
+  "globalSetup": "<rootDir>/test-utils/e2e/setup.ts",
+  "globalTeardown": "<rootDir>/test-utils/e2e/teardown.ts"
 }
