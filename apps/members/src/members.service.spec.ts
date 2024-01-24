@@ -69,7 +69,7 @@ describe('MembersService', () => {
 				memberRepository.find.mockResolvedValue(expectedMembers)
 
 				// When
-				const members = await service.findAll('active', role)
+				const members = await service.findAll('active', { role })
 
 				// Then
 				expect(members).toEqual(expectedMembers)
@@ -107,7 +107,7 @@ describe('MembersService', () => {
 				memberRepository.find.mockResolvedValue(expectedMembers)
 
 				// When
-				const members = await service.findAll('active', undefined, { [column]: value })
+				const members = await service.findAll('active', { [column]: value })
 
 				// Then
 				expect(members).toEqual(expectedMembers)

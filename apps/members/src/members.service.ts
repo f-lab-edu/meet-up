@@ -29,7 +29,6 @@ export class MembersService {
 
 	async findAll(
 		status: 'active' | 'deleted' | 'all' = 'active',
-		role?: Role,
 		filter?: {
 			[K in keyof Member]?: Member[K]
 		},
@@ -40,10 +39,6 @@ export class MembersService {
 			whereClause.deleted_at = IsNull()
 		} else if (status === 'deleted') {
 			whereClause.deleted_at = Not(IsNull())
-		}
-
-		if (role !== undefined) {
-			whereClause.role = role
 		}
 
 		const members = await this.memberRepository.find({ where: whereClause })
