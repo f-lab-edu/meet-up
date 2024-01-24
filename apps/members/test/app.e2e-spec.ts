@@ -6,7 +6,7 @@ import { Connection, Repository } from 'typeorm'
 import { resetDatabase } from '../../../test-utils/e2e/reset-database'
 import { Member } from '@app/entities/members/member.entity'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { Role } from '@app/entities/members/role.enums'
+import { roles } from '@app/entities/members/role.enums'
 
 describe('MembersController (e2e)', () => {
 	let app: INestApplication
@@ -32,9 +32,6 @@ describe('MembersController (e2e)', () => {
 		it('should return 204 "No Content" when no item is in database', () => {
 			return request(app.getHttpServer()).get('/').expect(204)
 		})
-
-		// Role enum as an array of its values
-		const roles = [Role.ROOT, Role.ADMIN, Role.CERTIFIED, Role.UNCERTIFIED]
 
 		// This case is written separately from other tests on querying by a specific column.
 		// It is because the entire enum has to be tested.
