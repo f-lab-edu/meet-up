@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { MembersModule } from './../src/members.module'
+import { MembersModule } from '../src/members.module'
 
 describe('MembersController (e2e)', () => {
 	let app: INestApplication
@@ -15,7 +15,9 @@ describe('MembersController (e2e)', () => {
 		await app.init()
 	})
 
-	it('/ (GET)', () => {
-		return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!')
+	describe('GET /', () => {
+		it('should return 204 "No Content" when no item is in database', () => {
+			return request(app.getHttpServer()).get('/').expect(204)
+		})
 	})
 })
