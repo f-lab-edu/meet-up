@@ -81,9 +81,13 @@ describe('MembersService', () => {
 				})
 			})
 		})
-		// Phone column is not included as it contains unique values.
+		type ColumnValuePair = {
+			column: keyof Member
+			value: string
+		}
+		// Phone column is not included as it contains unique values; use findOneBy instead.
 		// todo change phone column to unique.
-		describe.each([
+		describe.each<ColumnValuePair>([
 			{
 				column: 'firstName',
 				value: 'Peter',
@@ -97,7 +101,23 @@ describe('MembersService', () => {
 				value: 'Spider-Man',
 			},
 		])('when querying by a value of the specific column', ({ column, value }) => {
-			it.todo(`should return the array of members with the ${column} of ${value}`)
+			it(`should return the array of members with the ${column} of ${value}`, async () => {
+				// Given
+				const expectedMembers = [{ ...new Member(), [column]: value }]
+				memberRepository.find.mockResolvedValue(expectedMembers)
+
+				// When
+				const members = await service.findAll('active', undefined, { [column]: value })
+
+				// Then
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						[column]: value,
+					},
+				})
+			})
 		})
 		describe('when querying for members who has no attendance in the current quarter', () => {
 			it.todo('should return the array of members who has no attendance in the current quarter')

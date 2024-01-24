@@ -27,13 +27,19 @@ export class MembersService {
 		return 'Hello World!'
 	}
 
-	async findAll(status: 'active' | 'deleted' | 'all' = 'active', role?: Role): Promise<Member[]> {
-		let whereClause: any = {}
+	async findAll(
+		status: 'active' | 'deleted' | 'all' = 'active',
+		role?: Role,
+		filter?: {
+			[K in keyof Member]?: Member[K]
+		},
+	): Promise<Member[]> {
+		const whereClause: any = filter || {}
 
 		if (status === 'active') {
-			whereClause = { deleted_at: IsNull() }
+			whereClause.deleted_at = IsNull()
 		} else if (status === 'deleted') {
-			whereClause = { deleted_at: Not(IsNull()) }
+			whereClause.deleted_at = Not(IsNull())
 		}
 
 		if (role !== undefined) {
