@@ -32,24 +32,37 @@ describe('MembersController (e2e)', () => {
 			return request(app.getHttpServer()).get('/').expect(204)
 		})
 		it('should return 200 "OK" when item is in database', async () => {
-			// Adding new rows to members table
-			const member1 = new Member()
-			member1.firstName = 'John'
-			member1.lastName = 'Doe'
-			member1.nickname = 'JD'
-			member1.phone = '01012345678'
-			const member2 = new Member()
-			member2.firstName = 'Jane'
-			member2.lastName = 'Smith'
-			member2.nickname = 'JS'
-			member2.phone = '01012345677'
-			await memberRepository.save([member1, member2])
+			// Generate and save members to the database
+			const members = generateMembers(2)
+			await memberRepository.save(members)
 
-			// Query the members table
-			const members = await memberRepository.find()
-			expect(members.length).toBe(2)
+			// Send a GET request to the server
+			const response = await request(app.getHttpServer()).get('/')
 
-			return request(app.getHttpServer()).get('/').expect(200)
+			// Check the HTTP status and the length of the response body
+			expect(response.status).toBe(200)
+			expect(response.body.length).toBe(2)
 		})
 	})
 })
+
+/**
+ * Generates an array of Member objects
+ * @param {number} count - The number of Member objects to generate. Must be a positive integer.
+ * @returns {Member[]} An array of Member objects.
+ * @throws {Error} Will throw an error if count is not a positive number.
+ */
+function generateMembers(count: number): Member[] {
+	if (count <= 0) {
+		throw new Error(`Count must be a positive number. Received: ${count}`)
+	}
+
+	return Array.from({ length: count }, (_, i) => {
+		const member = new Member()
+		member.firstName = `First${i}`
+		member.lastName = `Last${i}`
+		member.nickname = `Nickname${i}`
+		member.phone = `010${String(i).padStart(8, '0')}`
+		return member
+	})
+}
