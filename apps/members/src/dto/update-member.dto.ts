@@ -8,4 +8,12 @@ export class UpdateMemberDto extends MemberDto {
 	nickname?: string
 
 	phone?: string
+
+	// todo create member dto also requires it
+
+	created_at?: never
+
+	updated_at?: never
+
+	deleted_at?: never
 }
