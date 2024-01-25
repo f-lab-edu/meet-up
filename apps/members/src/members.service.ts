@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
-import { IsNull, Not, Repository } from 'typeorm'
+import { Between, FindOperator, IsNull, LessThan, MoreThan, Not, Repository } from 'typeorm'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { ConfigService } from '@nestjs/config'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
@@ -10,6 +10,7 @@ import { Role } from '@app/entities/members/role.enums'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
+import { DateFilter } from './dto/get-members.dto'
 
 // This is an interface because it's serving as a contract for a certain shape that an object must adhere to.
 // Here, DatabaseError is an Error object that may optionally include a code string.
@@ -40,21 +41,20 @@ export class MembersService {
 		return 'Hello World!'
 	}
 
-	async findAll(
-		status: 'active' | 'deleted' | 'all' = 'active',
-		filter?: {
-			[K in keyof Member]?: Member[K]
-		},
-	): Promise<Member[]> {
-		const whereClause: any = filter || {}
+	async findAll(status: 'active' | 'deleted' | 'all' = 'active', filter: MembersQueryFilters = {}): Promise<Member[]> {
+		const where: MembersWhereCondition = { ...filter }
 
+		// handle deletion state
 		if (status === 'active') {
-			whereClause.deleted_at = IsNull()
+			where.deleted_at = IsNull()
 		} else if (status === 'deleted') {
-			whereClause.deleted_at = Not(IsNull())
+			where.deleted_at = Not(IsNull())
 		}
 
-		const members = await this.memberRepository.find({ where: whereClause })
+		this.applyCreatedAtFilters(where)
+
+		const members = await this.memberRepository.find({ where })
+
 		if (members.length === 0) {
 			throw new HttpException('No Content', HttpStatus.NO_CONTENT)
 		}
