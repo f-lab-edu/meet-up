@@ -11,8 +11,21 @@ import { MemberNotFoundException } from '@app/exceptions/member-not-found.except
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
 
+// This is an interface because it's serving as a contract for a certain shape that an object must adhere to.
+// Here, DatabaseError is an Error object that may optionally include a code string.
+// Thus, to extend the standard Error object with a new property, an interface is perfectly suited.
 interface DatabaseError extends Error {
 	code?: string
+}
+
+// This is a type because it represents an application of a transformation over the Member type - for every key in Member.
+type MembersQueryFilters = {
+	[K in keyof Omit<Member, 'created_at' | 'deleted_at'>]?: Member[K]
+} & DateFilter
+
+type MembersWhereCondition = MembersQueryFilters & {
+	created_at?: FindOperator<Date>
+	deleted_at?: FindOperator<Date>
 }
 
 @Injectable()
@@ -98,6 +111,15 @@ export class MembersService {
 		}
 
 		await this.memberRepository.update(id, { deleted_at: new Date(), role: null })
+	}
+
+	private applyCreatedAtFilters(where: MembersWhereCondition) {
+		if (where.created_after && where.created_before) where.created_at = Between(where.created_after, where.created_before)
+		else if (where.created_after) where.created_at = MoreThan(where.created_after)
+		else if (where.created_before) where.created_at = LessThan(where.created_before)
+
+		delete where.created_after
+		delete where.created_before
 	}
 
 	private handleMemberExceptions(error: DatabaseError) {
