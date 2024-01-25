@@ -2,7 +2,7 @@ import { MembersService } from './members.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
-import { IsNull, Not, Repository } from 'typeorm'
+import { Between, IsNull, LessThan, MoreThan, Not, Repository } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { randomUUID } from 'crypto'
 import { CreateMemberDto } from './dto/create-member.dto'
@@ -115,6 +115,58 @@ describe('MembersService', () => {
 					where: {
 						deleted_at: IsNull(),
 						[column]: value,
+					},
+				})
+			})
+		})
+		describe('when querying by creation date', () => {
+			// Given
+			const date = new Date()
+			const expectedMembers = [new Member()]
+
+			beforeEach(() => {
+				memberRepository.find.mockResolvedValue(expectedMembers)
+			})
+
+			it('should query with MoreThan date condition for members created after a specific date', async () => {
+				// When
+				const members = await service.findAll('active', { created_after: date })
+
+				// Assert
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						created_at: MoreThan(date),
+					},
+				})
+			})
+			it('should query with LessThan date condition for members created before a specific date', async () => {
+				// When
+				const members = await service.findAll('active', { created_before: date })
+
+				// Assert
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						created_at: LessThan(date),
+					},
+				})
+			})
+			it('should query with Between condition for members created between two specific dates', async () => {
+				// Given
+				const anotherDate = new Date()
+
+				// When
+				const members = await service.findAll('active', { created_after: date, created_before: anotherDate })
+
+				// Assert
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						created_at: Between(date, anotherDate),
 					},
 				})
 			})
