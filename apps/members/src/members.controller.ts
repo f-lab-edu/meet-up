@@ -3,14 +3,15 @@ import { MembersService } from './members.service'
 import { Member } from '@app/entities/members/member.entity'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { UpdateMemberDto } from './dto/update-member.dto'
+import { GetMembersDto } from './dto/get-members.dto'
 
 @Controller()
 export class MembersController {
 	constructor(private readonly membersService: MembersService) {}
 
 	@Get()
-	getMembers(@Query() filters: { [K in keyof Member]?: Member[K] }): Promise<Member[]> {
-		return this.membersService.findAll('active', filters)
+	getMembers(@Query() query: GetMembersDto): Promise<Member[]> {
+		return this.membersService.findAll('active', query)
 	}
 
 	@Get('/:id')
