@@ -70,6 +70,7 @@ Resources:
           - 0
           - Fn::GetAZs:
               !Ref AWS::Region
+      MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub ${ProjectName}-app-1
@@ -83,6 +84,7 @@ Resources:
           - 1
           - Fn::GetAZs:
               !Ref AWS::Region
+      MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub ${ProjectName}-app-2
@@ -173,7 +175,7 @@ Resources:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref AppSubnet1
-      RouteTableId: !Ref PrivateRouteTable1
+      RouteTableId: !Ref PublicRouteTable
   DbSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -193,7 +195,7 @@ Resources:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref AppSubnet2
-      RouteTableId: !Ref PrivateRouteTable2
+      RouteTableId: !Ref PublicRouteTable
   DbSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
