@@ -300,7 +300,7 @@ Resources:
       NetworkMode: awsvpc
       ContainerDefinitions:
         - Name: test # todo use parameter
-          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EcrRepository}:latest
+          Image: public.ecr.aws/nginx/nginx:latest
           LogConfiguration:
             LogDriver: awslogs
             Options:
