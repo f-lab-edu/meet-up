@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common'
 import { MembersService } from './members.service'
 import { Member } from '@app/entities/members/member.entity'
 import { CreateMemberDto } from './dto/create-member.dto'
@@ -34,7 +34,7 @@ export class MembersController {
 		return this.membersService.updateRole(id, role)
 	}
 
-	@Patch('/:id/delete')
+	@Delete('/:id/delete')
 	deleteMember(@Param('id') id: string): Promise<void> {
 		return this.membersService.delete(id)
 	}
