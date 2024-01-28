@@ -356,7 +356,7 @@ Resources:
       AllocatedStorage: 20
       DBInstanceClass: db.t2.micro
       Engine: postgres
-      EngineVersion: 12.5
+      EngineVersion: 16.1
       MasterUsername: postgres
       MasterUserPassword: postgres
       VPCSecurityGroups:
