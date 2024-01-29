@@ -8,7 +8,6 @@ import { randomUUID } from 'crypto'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 import { ConfigModule } from '@nestjs/config'
-import Configuration from '@app/config/configuration'
 import { UpdateMemberDto } from './dto/update-member.dto'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
@@ -38,7 +37,7 @@ describe('MembersService', () => {
 					useValue: createMockRepository(),
 				},
 			],
-			imports: [ConfigModule.forRoot({ load: [Configuration] }), ConfigModule.forFeature(databaseConfig)],
+			imports: [ConfigModule.forRoot({}), ConfigModule.forFeature(databaseConfig)],
 		}).compile()
 
 		service = module.get<MembersService>(MembersService)
