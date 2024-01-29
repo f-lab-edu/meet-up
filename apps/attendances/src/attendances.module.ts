@@ -7,14 +7,13 @@ import { Member } from '@app/entities/members/member.entity'
 import { Attendance } from '@app/entities/attendances/attendance.entity'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config'
-import configuration from '@app/config/configuration'
 import { LoggingMiddleware } from '@app/log/logging.middleware'
 import { KebabToCamelConversionMiddleware } from '@app/middlewares'
 import databaseConfig from '@app/config/database.config'
 
 @Module({
 	imports: [
-		ConfigModule.forRoot({ load: [configuration], ignoreEnvFile: true }),
+		ConfigModule.forRoot({ ignoreEnvFile: true }),
 		TypeOrmModule.forRootAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
