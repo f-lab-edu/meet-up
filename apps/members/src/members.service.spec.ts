@@ -14,6 +14,7 @@ import { MemberNotFoundException } from '@app/exceptions/member-not-found.except
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 import { Role, roles } from '@app/entities/members/role.enums'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
+import databaseConfig from '@app/config/database.config'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 const createMockRepository = <T = any>(): MockRepository<T> => ({
@@ -37,7 +38,7 @@ describe('MembersService', () => {
 					useValue: createMockRepository(),
 				},
 			],
-			imports: [ConfigModule.forRoot({ load: [Configuration] })],
+			imports: [ConfigModule.forRoot({ load: [Configuration] }), ConfigModule.forFeature(databaseConfig)],
 		}).compile()
 
 		service = module.get<MembersService>(MembersService)
@@ -266,8 +267,8 @@ describe('MembersService', () => {
 				duplicateError.code = '23505'
 				jest.spyOn(memberRepository, 'save').mockRejectedValue(duplicateError)
 
-				const mockConfigService = { get: jest.fn() } as any
-				mockConfigService.get.mockReturnValue('postgres')
+				// const mockConfigService = { get: jest.fn() } as any
+				// mockConfigService.get.mockReturnValue('postgres')
 
 				await expect(service.create(mockMemberDto)).rejects.toThrow(DuplicateMemberException)
 			})
@@ -299,8 +300,8 @@ describe('MembersService', () => {
 				duplicateError.code = '23505'
 				jest.spyOn(memberRepository, 'update').mockRejectedValue(duplicateError)
 
-				const mockConfigService = { get: jest.fn() } as any
-				mockConfigService.get.mockReturnValue('postgres')
+				// const mockConfigService = { get: jest.fn() } as any
+				// mockConfigService.get.mockReturnValue('postgres')
 
 				const memberId = randomUUID()
 

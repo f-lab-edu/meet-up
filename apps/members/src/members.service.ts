@@ -1,9 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
 import { Between, FindOperator, IsNull, LessThan, MoreThan, Not, Repository } from 'typeorm'
 import { CreateMemberDto } from './dto/create-member.dto'
-import { ConfigService } from '@nestjs/config'
+import { ConfigType } from '@nestjs/config'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 import { UpdateMemberDto } from './dto/update-member.dto'
 import { Role } from '@app/entities/members/role.enums'
@@ -11,6 +11,7 @@ import { MemberNotFoundException } from '@app/exceptions/member-not-found.except
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
 import { DateFilter } from './dto/get-members.dto'
+import databaseConfig from '@app/config/database.config'
 
 // This is an interface because it's serving as a contract for a certain shape that an object must adhere to.
 // Here, DatabaseError is an Error object that may optionally include a code string.
@@ -34,7 +35,8 @@ export class MembersService {
 	constructor(
 		@InjectRepository(Member)
 		private readonly memberRepository: Repository<Member>,
-		private readonly configService: ConfigService,
+		@Inject(databaseConfig.KEY)
+		private readonly databaseConfiguration: ConfigType<typeof databaseConfig>,
 	) {}
 
 	getHello(): string {
@@ -123,7 +125,7 @@ export class MembersService {
 	}
 
 	private handleMemberExceptions(error: DatabaseError) {
-		if (this.configService.get('database') === 'postgres') {
+		if (this.databaseConfiguration.type === 'postgres') {
 			if (error.code === '23505') {
 				throw new DuplicateMemberException()
 			} else {
