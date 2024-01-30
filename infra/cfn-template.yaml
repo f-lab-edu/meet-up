@@ -288,8 +288,6 @@ Resources:
       RetentionInDays: 7
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
-    DependsOn:
-      TaskDefinitionLogGroup
     Properties:
       Cpu: 256
       Memory: 512
