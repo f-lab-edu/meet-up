@@ -427,3 +427,64 @@ Resources:
                   Fn::Sub:
                     - "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:service/${EcsServiceName}"
                     - EcsServiceName: !Ref Service
+              - Effect: Allow
+                Action:
+                  - codestar-connections:UseConnection
+                Resource: !Sub "arn:aws:codestar-connection:${AWS::Region}:${AWS::AccountId}:connection/13941896-5902-45f8-9c16-a162f0c693e1"
+
+  #  PipelineRole:
+  #    Type: AWS::IAM::Role
+  #    Properties:
+  #      Path: /
+  #      AssumeRolePolicyDocument:
+  #        Version: 2012-10-17
+  #        Statement:
+  #          - Effect: Allow
+  #            Principal:
+  #              Service: codepipeline.amazonaws.com
+  #            Action: sts:AssumeRole
+  #      Policies:
+  #        - PolicyName: root
+  #          PolicyDocument:
+  #            Version: 2012-10-17
+  #            Statement:
+  #              - Resource: "*"
+  #                Effect: Allow
+  #                Action:
+  #                  - s3:*
+  #              - Resource: "*"
+  #                Effect: Allow
+  #                Action:
+  #                  - codestar-connections:UseConnection
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        Location: !Ref ArtifactStore
+        Type: S3
+      RoleArn: !GetAtt [ PipelineRole, Arn ]
+      PipelineType: V2
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: GetSource
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: CodeStarSourceConnection
+              OutputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                ConnectionArn: arn:aws:codestar-connections:us-west-2:211170425181:connection/13941896-5902-45f8-9c16-a162f0c693e1
+                FullRepositoryId: f-lab-edu/meet-up
+                BranchName: main
+              RunOrder: 1
+        - Name: ManualApproval # Dummy stage to test the previous stage.
+          Actions:
+            - Name: ManualApproval
+              ActionTypeId:
+                Category: Approval
+                Owner: AWS
+                Provider: Manual
+                Version: 1
