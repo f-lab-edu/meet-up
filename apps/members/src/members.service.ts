@@ -114,12 +114,12 @@ export class MembersService {
 	}
 
 	private applyCreatedAtFilters(where: MembersWhereCondition) {
-		if (where.created_after && where.created_before) where.created_at = Between(where.created_after, where.created_before)
-		else if (where.created_after) where.created_at = MoreThan(where.created_after)
-		else if (where.created_before) where.created_at = LessThan(where.created_before)
+		if (where.createdAfter && where.createdBefore) where.created_at = Between(where.createdAfter, where.createdBefore)
+		else if (where.createdAfter) where.created_at = MoreThan(where.createdAfter)
+		else if (where.createdBefore) where.created_at = LessThan(where.createdBefore)
 
-		delete where.created_after
-		delete where.created_before
+		delete where.createdAfter
+		delete where.createdBefore
 	}
 
 	private handleMemberExceptions(error: DatabaseError) {

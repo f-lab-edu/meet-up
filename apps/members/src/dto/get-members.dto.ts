@@ -3,8 +3,8 @@ import { Transform } from 'class-transformer'
 import { MemberDto } from './member.dto'
 
 export type DateFilter = {
-	created_after?: Date
-	created_before?: Date
+	createdAfter?: Date
+	createdBefore?: Date
 }
 
 const toDate = ({ value }) => (value ? new Date(value) : value)
@@ -13,10 +13,10 @@ export class GetMembersDto extends MemberDto implements DateFilter {
 	@IsOptional()
 	@IsDateString()
 	@Transform(toDate)
-	created_after?: Date
+	createdAfter?: Date
 
 	@IsOptional()
 	@IsDateString()
 	@Transform(toDate)
-	created_before?: Date
+	createdBefore?: Date
 }

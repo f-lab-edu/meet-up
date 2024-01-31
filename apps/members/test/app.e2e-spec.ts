@@ -112,7 +112,7 @@ describe('MembersController (e2e)', () => {
 			})
 			it('should return the array of members created after the provided date', async () => {
 				// Got
-				const response = await request(app.getHttpServer()).get('/').query({ created_after: afterDate })
+				const response = await request(app.getHttpServer()).get('/').query({ 'created-after': afterDate })
 
 				// Assert
 				expect(response.status).toBe(200)
@@ -121,7 +121,7 @@ describe('MembersController (e2e)', () => {
 			it('should return the array of members created before the provided date', async () => {
 				// Got
 				const response = await request(app.getHttpServer()).get('/').query({
-					created_before: beforeDate,
+					'created-before': beforeDate,
 				})
 
 				// Assert
@@ -131,8 +131,8 @@ describe('MembersController (e2e)', () => {
 			it('should return the array of members created between the provided dates', async () => {
 				// Got
 				const response = await request(app.getHttpServer()).get('/').query({
-					created_after: afterDate,
-					created_before: beforeDate,
+					'created-after': afterDate,
+					'created-before': beforeDate,
 				})
 
 				// Assert

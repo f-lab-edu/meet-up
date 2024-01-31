@@ -130,7 +130,7 @@ describe('MembersService', () => {
 
 			it('should query with MoreThan date condition for members created after a specific date', async () => {
 				// When
-				const members = await service.findAll('active', { created_after: date })
+				const members = await service.findAll('active', { createdAfter: date })
 
 				// Assert
 				expect(members).toEqual(expectedMembers)
@@ -143,7 +143,7 @@ describe('MembersService', () => {
 			})
 			it('should query with LessThan date condition for members created before a specific date', async () => {
 				// When
-				const members = await service.findAll('active', { created_before: date })
+				const members = await service.findAll('active', { createdBefore: date })
 
 				// Assert
 				expect(members).toEqual(expectedMembers)
@@ -159,7 +159,7 @@ describe('MembersService', () => {
 				const anotherDate = new Date()
 
 				// When
-				const members = await service.findAll('active', { created_after: date, created_before: anotherDate })
+				const members = await service.findAll('active', { createdAfter: date, createdBefore: anotherDate })
 
 				// Assert
 				expect(members).toEqual(expectedMembers)
