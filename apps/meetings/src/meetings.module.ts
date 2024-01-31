@@ -9,6 +9,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import configuration from '@app/config/configuration'
 import { LoggingMiddleware } from '@app/log/logging.middleware'
+import { KebabToCamelConversionMiddleware } from '@app/middlewares'
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import { LoggingMiddleware } from '@app/log/logging.middleware'
 })
 export class MeetingsModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): any {
+		consumer.apply(KebabToCamelConversionMiddleware).forRoutes('*')
 		consumer.apply(LoggingMiddleware).forRoutes('*')
 	}
 }
