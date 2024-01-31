@@ -2,7 +2,7 @@ import { MembersService } from './members.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
-import { Between, IsNull, LessThan, MoreThan, Not, Repository } from 'typeorm'
+import { Between, IsNull, LessThan, MoreThan, Not } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { randomUUID } from 'crypto'
 import { CreateMemberDto } from './dto/create-member.dto'
@@ -14,9 +14,9 @@ import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential
 import { Role, roles } from '@app/entities/members/role.enums'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
 import databaseConfig from '@app/config/database.config'
+import { MockRepositoryType } from '../../../test-utils/unit/mock-repository.type'
 
-type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
-const createMockRepository = <T = any>(): MockRepository<T> => ({
+const createMockRepository = <T = any>(): MockRepositoryType<T> => ({
 	find: jest.fn(),
 	findOne: jest.fn(),
 	findOneBy: jest.fn(),
@@ -26,7 +26,7 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
 
 describe('MembersService', () => {
 	let service: MembersService
-	let memberRepository: MockRepository
+	let memberRepository: MockRepositoryType
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -41,7 +41,7 @@ describe('MembersService', () => {
 		}).compile()
 
 		service = module.get<MembersService>(MembersService)
-		memberRepository = module.get<MockRepository>(getRepositoryToken(Member))
+		memberRepository = module.get<MockRepositoryType>(getRepositoryToken(Member))
 	})
 
 	it('should be defined', () => {
