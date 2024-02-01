@@ -6,6 +6,7 @@ import { Meeting } from '@app/entities/meetings/meeting.entity'
 import { ConfigModule } from '@nestjs/config'
 import databaseConfig from '@app/config/database.config'
 import { PaginationOptions } from '@app/types/pagination.types'
+import { MoreThan } from 'typeorm'
 
 const createMockRepository = <T = any>(): MockRepositoryType<T> => ({
 	findAndCount: jest.fn(),
@@ -36,6 +37,13 @@ describe('MeetingsService', () => {
 	})
 
 	describe('findAll', () => {
+		const defaultPagination: PaginationOptions = {
+			page: 1,
+			limit: 10,
+		}
+		const { page, limit } = defaultPagination
+		const skip = (page - 1) * limit
+		const take = limit
 		describe('with no records', () => {
 			it.todo('should return an empty array')
 		})
@@ -43,10 +51,29 @@ describe('MeetingsService', () => {
 			it.todo('should return meetings matching the queried column values')
 		})
 		describe('when querying by a date of meetings', () => {
-			it.todo('should return meetings after a specific date')
-			it.todo('should return meetings before a specific date')
-			it.todo('should return meetings between a specific start and end date')
+			const date = new Date()
+			const resolvedValue = [[new Meeting()], 1]
+
+			beforeEach(() => {
+				meetingRepository.findAndCount.mockResolvedValue(resolvedValue)
+			})
+			it('should return meetings after a specific date', async () => {
+				// Want
+				const created_at = MoreThan(date)
+
+				// When
+				await service.findAll(defaultPagination, { createdAfter: date })
+
+				// Assert
+				expect(meetingRepository.findAndCount).toHaveBeenCalledWith({
+					created_at,
+					skip,
+					take,
+				})
+			})
 		})
+		it.todo('should return meetings before a specific date')
+		it.todo('should return meetings between a specific start and end date')
 		describe('when querying with pagination', () => {
 			it('should return meetings with the specified pagination options', async () => {
 				// Want
@@ -72,14 +99,10 @@ describe('MeetingsService', () => {
 		describe('otherwise', () => {
 			it('should return an array of meetings', async () => {
 				// Want
-				const want = Array.from({ length: 10 }, () => new Meeting())
 
+				const want = Array.from({ length: 10 }, () => new Meeting())
 				// When
 				meetingRepository.findAndCount.mockResolvedValue([want])
-				const defaultPagination: PaginationOptions = {
-					page: 1,
-					limit: 10,
-				}
 
 				// Got
 				const { items: got } = await service.findAll(defaultPagination)
@@ -89,59 +112,59 @@ describe('MeetingsService', () => {
 			})
 		})
 	})
-	describe('findOne', () => {
-		describe('when querying by ID', () => {
-			it.todo('should return the meeting with the matching ID')
-		})
+})
+describe('findOne', () => {
+	describe('when querying by ID', () => {
+		it.todo('should return the meeting with the matching ID')
 	})
-	describe('create', () => {
-		describe('when duplicate meeting exists', () => {
-			it.todo('should throw an error')
-		})
-		describe('otherwise', () => {
-			it.todo('should create a new meeting')
-		})
+})
+describe('create', () => {
+	describe('when duplicate meeting exists', () => {
+		it.todo('should throw an error')
 	})
-	describe('updateTopics', () => {
-		describe('when invalid topic IDs are provided', () => {
-			it.todo('should throw an error')
-		})
-		describe('when excess topic IDs are provided', () => {
-			it.todo('should throw an error')
-		})
-		describe('when topic IDs are already in use', () => {
-			it.todo('should throw an error')
-		})
-		describe('otherwise', () => {
-			it.todo('should update topics')
-		})
+	describe('otherwise', () => {
+		it.todo('should create a new meeting')
 	})
-	describe('updateNote', () => {
-		it.todo('should update meeting note')
+})
+describe('updateTopics', () => {
+	describe('when invalid topic IDs are provided', () => {
+		it.todo('should throw an error')
 	})
-	describe('cancel', () => {
-		describe('when meeting is already cancelled', () => {
-			it.todo('should throw an error')
-		})
-		describe('when canceling past meeting', () => {
-			it.todo('should throw an error')
-		})
-		describe('when invalid meeting ID is provided', () => {
-			it.todo('should throw an error')
-		})
-		describe('otherwise', () => {
-			it.todo('should cancel meeting')
-		})
+	describe('when excess topic IDs are provided', () => {
+		it.todo('should throw an error')
 	})
-	describe('getAttendees', () => {
-		describe('when an invalid meeting ID is provided', () => {
-			it.todo('should throw an error')
-		})
-		describe('when there is are no attendees', () => {
-			it.todo('should return an empty array')
-		})
-		describe('otherwise', () => {
-			it.todo('should return an array of members')
-		})
+	describe('when topic IDs are already in use', () => {
+		it.todo('should throw an error')
+	})
+	describe('otherwise', () => {
+		it.todo('should update topics')
+	})
+})
+describe('updateNote', () => {
+	it.todo('should update meeting note')
+})
+describe('cancel', () => {
+	describe('when meeting is already cancelled', () => {
+		it.todo('should throw an error')
+	})
+	describe('when canceling past meeting', () => {
+		it.todo('should throw an error')
+	})
+	describe('when invalid meeting ID is provided', () => {
+		it.todo('should throw an error')
+	})
+	describe('otherwise', () => {
+		it.todo('should cancel meeting')
+	})
+})
+describe('getAttendees', () => {
+	describe('when an invalid meeting ID is provided', () => {
+		it.todo('should throw an error')
+	})
+	describe('when there is are no attendees', () => {
+		it.todo('should return an empty array')
+	})
+	describe('otherwise', () => {
+		it.todo('should return an array of members')
 	})
 })
