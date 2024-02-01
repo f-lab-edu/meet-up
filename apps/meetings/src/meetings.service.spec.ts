@@ -6,7 +6,7 @@ import { Meeting } from '@app/entities/meetings/meeting.entity'
 import { ConfigModule } from '@nestjs/config'
 import databaseConfig from '@app/config/database.config'
 import { PaginationOptions } from '@app/types/pagination.types'
-import { MoreThan } from 'typeorm'
+import { Between, LessThan, MoreThan } from 'typeorm'
 
 const createMockRepository = <T = any>(): MockRepositoryType<T> => ({
 	findAndCount: jest.fn(),
@@ -71,9 +71,36 @@ describe('MeetingsService', () => {
 					take,
 				})
 			})
+			it('should return meetings before a specific date', async () => {
+				// Want
+				const created_at = LessThan(date)
+
+				// When
+				await service.findAll(defaultPagination, { createdBefore: date })
+
+				// Assert
+				expect(meetingRepository.findAndCount).toHaveBeenCalledWith({
+					created_at,
+					skip,
+					take,
+				})
+			})
+			it('should return meetings between a specific start and end date', async () => {
+				// Want
+				const anotherDate = new Date()
+				const created_at = Between(date, anotherDate)
+
+				// When
+				await service.findAll(defaultPagination, { createdAfter: date, createdBefore: anotherDate })
+
+				// Assert
+				expect(meetingRepository.findAndCount).toHaveBeenCalledWith({
+					created_at,
+					skip,
+					take,
+				})
+			})
 		})
-		it.todo('should return meetings before a specific date')
-		it.todo('should return meetings between a specific start and end date')
 		describe('when querying with pagination', () => {
 			it('should return meetings with the specified pagination options', async () => {
 				// Want
