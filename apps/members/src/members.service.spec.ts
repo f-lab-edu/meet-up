@@ -50,6 +50,7 @@ describe('MembersService', () => {
 
 	describe('findAll', () => {
 		describe('when there is no record in members table', () => {
+			// todo change this to return empty array
 			it('should throw HttpException 204', async () => {
 				const want = []
 				memberRepository.find.mockReturnValue(want)
@@ -242,9 +243,10 @@ describe('MembersService', () => {
 		it.todo('should throw an exception if no members are found')
 		it.todo('should return members sorted by attendance in descending order by default')
 	})
+	// todo refactor this to findOne
 	describe('findOneBy', () => {
 		describe('when querying by ID', () => {
-			it('should return the member with the ID', async () => {
+			it('should return the member with the matching ID', async () => {
 				const want = new Member()
 				want.id = randomUUID()
 				memberRepository.findOneBy.mockReturnValue(want)
