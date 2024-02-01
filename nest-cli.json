@@ -82,7 +82,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/exceptions/tsconfig.lib.json"
       }
+    },
+    "middlewares": {
+      "type": "library",
+      "root": "libs/middlewares",
+      "entryFile": "index",
+      "sourceRoot": "libs/middlewares/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/middlewares/tsconfig.lib.json"
+      }
+    },
+    "types": {
+      "type": "library",
+      "root": "libs/types",
+      "entryFile": "index",
+      "sourceRoot": "libs/types/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/types/tsconfig.lib.json"
+      }
     }
   }
 }
-

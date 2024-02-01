@@ -2,21 +2,21 @@ import { MembersService } from './members.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
-import { IsNull, Not, Repository } from 'typeorm'
+import { Between, IsNull, LessThan, MoreThan, Not } from 'typeorm'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { randomUUID } from 'crypto'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
 import { ConfigModule } from '@nestjs/config'
-import Configuration from '@app/config/configuration'
 import { UpdateMemberDto } from './dto/update-member.dto'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
-import { Role } from '@app/entities/members/role.enums'
+import { Role, roles } from '@app/entities/members/role.enums'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
+import databaseConfig from '@app/config/database.config'
+import { MockRepositoryType } from '../../../test-utils/unit/mock-repository.type'
 
-type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
-const createMockRepository = <T = any>(): MockRepository<T> => ({
+const createMockRepository = <T = any>(): MockRepositoryType<T> => ({
 	find: jest.fn(),
 	findOne: jest.fn(),
 	findOneBy: jest.fn(),
@@ -26,7 +26,7 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
 
 describe('MembersService', () => {
 	let service: MembersService
-	let memberRepository: MockRepository
+	let memberRepository: MockRepositoryType
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -37,11 +37,11 @@ describe('MembersService', () => {
 					useValue: createMockRepository(),
 				},
 			],
-			imports: [ConfigModule.forRoot({ load: [Configuration] })],
+			imports: [ConfigModule.forRoot({}), ConfigModule.forFeature(databaseConfig)],
 		}).compile()
 
 		service = module.get<MembersService>(MembersService)
-		memberRepository = module.get<MockRepository>(getRepositoryToken(Member))
+		memberRepository = module.get<MockRepositoryType>(getRepositoryToken(Member))
 	})
 
 	it('should be defined', () => {
@@ -50,6 +50,7 @@ describe('MembersService', () => {
 
 	describe('findAll', () => {
 		describe('when there is no record in members table', () => {
+			// todo change this to return empty array
 			it('should throw HttpException 204', async () => {
 				const want = []
 				memberRepository.find.mockReturnValue(want)
@@ -62,14 +63,32 @@ describe('MembersService', () => {
 				}
 			})
 		})
-		// This case is written separately from other tests on querying by a specific column.
-		// It is because the entire enum has to be tested.
-		describe.each([{ role: 'ROOT' }, { role: 'ADMIN' }, { role: 'CERTIFIED' }, { role: 'UNCERTIFIED' }])('when querying by role', ({ role }) => {
-			it.todo(`should return the array of members with the role of ${role}`)
+		describe.each(roles)('when querying by roles %s', role => {
+			it('should return array of members with that role', async () => {
+				// Given
+				const expectedMembers = [{ ...new Member(), role }]
+				memberRepository.find.mockResolvedValue(expectedMembers)
+
+				// When
+				const members = await service.findAll('active', { role })
+
+				// Then
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						role,
+					},
+				})
+			})
 		})
-		// Phone column is not included as it contains unique values.
+		type ColumnValuePair = {
+			column: keyof Member
+			value: string
+		}
+		// Phone column is not included as it contains unique values; use findOneBy instead.
 		// todo change phone column to unique.
-		describe.each([
+		describe.each<ColumnValuePair>([
 			{
 				column: 'firstName',
 				value: 'Peter',
@@ -83,7 +102,75 @@ describe('MembersService', () => {
 				value: 'Spider-Man',
 			},
 		])('when querying by a value of the specific column', ({ column, value }) => {
-			it.todo(`should return the array of members with the ${column} of ${value}`)
+			it(`should return the array of members with the ${column} of ${value}`, async () => {
+				// Given
+				const expectedMembers = [{ ...new Member(), [column]: value }]
+				memberRepository.find.mockResolvedValue(expectedMembers)
+
+				// When
+				const members = await service.findAll('active', { [column]: value })
+
+				// Then
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						[column]: value,
+					},
+				})
+			})
+		})
+		describe('when querying by creation date', () => {
+			// Given
+			const date = new Date()
+			const expectedMembers = [new Member()]
+
+			beforeEach(() => {
+				memberRepository.find.mockResolvedValue(expectedMembers)
+			})
+
+			it('should query with MoreThan date condition for members created after a specific date', async () => {
+				// When
+				const members = await service.findAll('active', { createdAfter: date })
+
+				// Assert
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						created_at: MoreThan(date),
+					},
+				})
+			})
+			it('should query with LessThan date condition for members created before a specific date', async () => {
+				// When
+				const members = await service.findAll('active', { createdBefore: date })
+
+				// Assert
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						created_at: LessThan(date),
+					},
+				})
+			})
+			it('should query with Between condition for members created between two specific dates', async () => {
+				// Given
+				const anotherDate = new Date()
+
+				// When
+				const members = await service.findAll('active', { createdAfter: date, createdBefore: anotherDate })
+
+				// Assert
+				expect(members).toEqual(expectedMembers)
+				expect(memberRepository.find).toHaveBeenCalledWith({
+					where: {
+						deleted_at: IsNull(),
+						created_at: Between(date, anotherDate),
+					},
+				})
+			})
 		})
 		describe('when querying for members who has no attendance in the current quarter', () => {
 			it.todo('should return the array of members who has no attendance in the current quarter')
@@ -156,9 +243,10 @@ describe('MembersService', () => {
 		it.todo('should throw an exception if no members are found')
 		it.todo('should return members sorted by attendance in descending order by default')
 	})
+	// todo refactor this to findOne
 	describe('findOneBy', () => {
 		describe('when querying by ID', () => {
-			it('should return the member with the ID', async () => {
+			it('should return the member with the matching ID', async () => {
 				const want = new Member()
 				want.id = randomUUID()
 				memberRepository.findOneBy.mockReturnValue(want)
@@ -180,8 +268,8 @@ describe('MembersService', () => {
 				duplicateError.code = '23505'
 				jest.spyOn(memberRepository, 'save').mockRejectedValue(duplicateError)
 
-				const mockConfigService = { get: jest.fn() } as any
-				mockConfigService.get.mockReturnValue('postgres')
+				// const mockConfigService = { get: jest.fn() } as any
+				// mockConfigService.get.mockReturnValue('postgres')
 
 				await expect(service.create(mockMemberDto)).rejects.toThrow(DuplicateMemberException)
 			})
@@ -213,8 +301,8 @@ describe('MembersService', () => {
 				duplicateError.code = '23505'
 				jest.spyOn(memberRepository, 'update').mockRejectedValue(duplicateError)
 
-				const mockConfigService = { get: jest.fn() } as any
-				mockConfigService.get.mockReturnValue('postgres')
+				// const mockConfigService = { get: jest.fn() } as any
+				// mockConfigService.get.mockReturnValue('postgres')
 
 				const memberId = randomUUID()
 

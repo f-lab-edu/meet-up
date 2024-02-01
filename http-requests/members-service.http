@@ -1,0 +1,34 @@
+GET http://localhost:8081/
+Accept: application/json
+
+###
+
+GET http://localhost:8081/36ac0bc9-72a7-4208-8f10-c758c979cfea
+Accept: application/json
+
+###
+
+POST http://localhost:8081/
+Content-Type: application/x-www-form-urlencoded
+
+firstName = 철수 &
+lastName = 김 &
+nickname = John &
+phone = 01012345678
+
+###
+
+PUT http://localhost:8081/36ac0bc9-72a7-4208-8f10-c758c979cfea
+Content-Type: application/x-www-form-urlencoded
+
+firstName = SeungBin &
+lastName = Kim
+
+###
+
+PATCH http://localhost:8081/36ac0bc9-72a7-4208-8f10-c758c979cfea/role
+Content-Type: application/x-www-form-urlencoded
+
+role = 2
+
+###
