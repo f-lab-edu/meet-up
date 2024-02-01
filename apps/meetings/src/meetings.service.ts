@@ -1,19 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Meeting } from '@app/entities/meetings/meeting.entity'
-import { Between, FindOperator, LessThan, MoreThan, Repository } from 'typeorm'
+import { Between, LessThan, MoreThan, Repository } from 'typeorm'
 import { PaginationOptions, PaginationResult } from '@app/types/pagination.types'
-import { Member } from '@app/entities/members/member.entity'
-import { DateFilter } from '../../members/src/dto/get-members.dto'
-
-type MeetingsQueryFilters = {
-	[K in keyof Omit<Member, 'created_at' | 'deleted_at'>]?: Member[K]
-} & DateFilter
-
-type MeetingsWhereCondition = MeetingsQueryFilters & {
-	created_at?: FindOperator<Date>
-	deleted_at?: FindOperator<Date>
-}
+import { Filters, WhereCondition } from '@app/types'
 
 @Injectable()
 export class MeetingsService {
@@ -22,12 +12,12 @@ export class MeetingsService {
 		private readonly meetingsRepository: Repository<Meeting>,
 	) {}
 
-	async findAll(paginationOptions: PaginationOptions, filters?: MeetingsQueryFilters): Promise<PaginationResult<Meeting>> {
+	async findAll(paginationOptions: PaginationOptions, filters?: Filters<Meeting>): Promise<PaginationResult<Meeting>> {
 		const { page, limit } = paginationOptions
 		const skip = (page - 1) * limit
 		const take = limit
 
-		const where: MeetingsWhereCondition = { ...filters }
+		const where: WhereCondition<Meeting> = { ...filters }
 		this.applyCreatedAtFilters(where)
 
 		/*
@@ -45,7 +35,7 @@ export class MeetingsService {
 		}
 	}
 
-	private applyCreatedAtFilters(where: MeetingsWhereCondition) {
+	private applyCreatedAtFilters(where: WhereCondition<Meeting>) {
 		if (where.createdAfter && where.createdBefore) where.created_at = Between(where.createdAfter, where.createdBefore)
 		else if (where.createdAfter) where.created_at = MoreThan(where.createdAfter)
 		else if (where.createdBefore) where.created_at = LessThan(where.createdBefore)

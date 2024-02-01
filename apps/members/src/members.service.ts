@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Member } from '@app/entities/members/member.entity'
-import { Between, FindOperator, IsNull, LessThan, MoreThan, Not, Repository } from 'typeorm'
+import { Between, IsNull, LessThan, MoreThan, Not, Repository } from 'typeorm'
 import { CreateMemberDto } from './dto/create-member.dto'
 import { ConfigType } from '@nestjs/config'
 import { DuplicateMemberException } from '@app/exceptions/duplicate-member.exception'
@@ -10,24 +10,14 @@ import { Role } from '@app/entities/members/role.enums'
 import { MemberNotFoundException } from '@app/exceptions/member-not-found.exception'
 import { NonSequentialRoleUpdateException } from '@app/exceptions/non-sequential-role-update.exception'
 import { MemberRedundantDeletionException } from '@app/exceptions/member-redundant-deletion.exception'
-import { DateFilter } from './dto/get-members.dto'
 import databaseConfig from '@app/config/database.config'
+import { Filters, WhereCondition } from '@app/types'
 
 // This is an interface because it's serving as a contract for a certain shape that an object must adhere to.
 // Here, DatabaseError is an Error object that may optionally include a code string.
 // Thus, to extend the standard Error object with a new property, an interface is perfectly suited.
 interface DatabaseError extends Error {
 	code?: string
-}
-
-// This is a type because it represents an application of a transformation over the Member type - for every key in Member.
-type MembersQueryFilters = {
-	[K in keyof Omit<Member, 'created_at' | 'deleted_at'>]?: Member[K]
-} & DateFilter
-
-type MembersWhereCondition = MembersQueryFilters & {
-	created_at?: FindOperator<Date>
-	deleted_at?: FindOperator<Date>
 }
 
 @Injectable()
@@ -43,8 +33,8 @@ export class MembersService {
 		return 'Hello World!'
 	}
 
-	async findAll(status: 'active' | 'deleted' | 'all' = 'active', filter: MembersQueryFilters = {}): Promise<Member[]> {
-		const where: MembersWhereCondition = { ...filter }
+	async findAll(status: 'active' | 'deleted' | 'all' = 'active', filter: Filters<Member> = {}): Promise<Member[]> {
+		const where: WhereCondition<Member> = { ...filter }
 
 		// handle deletion state
 		if (status === 'active') {
@@ -115,7 +105,7 @@ export class MembersService {
 		await this.memberRepository.update(id, { deleted_at: new Date(), role: null })
 	}
 
-	private applyCreatedAtFilters(where: MembersWhereCondition) {
+	private applyCreatedAtFilters(where: WhereCondition<Member>) {
 		if (where.createdAfter && where.createdBefore) where.created_at = Between(where.createdAfter, where.createdBefore)
 		else if (where.createdAfter) where.created_at = MoreThan(where.createdAfter)
 		else if (where.createdBefore) where.created_at = LessThan(where.createdBefore)
