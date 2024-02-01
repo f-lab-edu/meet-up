@@ -10,7 +10,7 @@ export class MeetingsService {
 		private readonly meetingsRepository: Repository<Meeting>,
 	) {}
 
-	getHello(): string {
-		return 'Hello World!'
+	async findAll(): Promise<Meeting[]> {
+		return this.meetingsRepository.find()
 	}
 }

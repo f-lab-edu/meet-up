@@ -6,7 +6,9 @@ import { Meeting } from '@app/entities/meetings/meeting.entity'
 import { ConfigModule } from '@nestjs/config'
 import databaseConfig from '@app/config/database.config'
 
-const createMockRepository = <T = any>(): MockRepositoryType<T> => ({})
+const createMockRepository = <T = any>(): MockRepositoryType<T> => ({
+	find: jest.fn(),
+})
 
 describe('MeetingsService', () => {
 	let service: MeetingsService
@@ -48,7 +50,19 @@ describe('MeetingsService', () => {
 			it.todo('should return paginated meetings')
 		})
 		describe('otherwise', () => {
-			it.todo('should return an array of meetings')
+			it('should return an array of meetings', async () => {
+				// Want
+				const want = Array.from({ length: 10 }, () => new Meeting())
+
+				// When
+				meetingRepository.find.mockResolvedValue(want)
+
+				// Got
+				const got = await service.findAll()
+
+				// Assert
+				expect(got).toEqual(want)
+			})
 		})
 	})
 	describe('findOne', () => {
