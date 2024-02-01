@@ -5,9 +5,10 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { Meeting } from '@app/entities/meetings/meeting.entity'
 import { ConfigModule } from '@nestjs/config'
 import databaseConfig from '@app/config/database.config'
+import { PaginationOptions } from '@app/types/pagination.types'
 
 const createMockRepository = <T = any>(): MockRepositoryType<T> => ({
-	find: jest.fn(),
+	findAndCount: jest.fn(),
 })
 
 describe('MeetingsService', () => {
@@ -47,7 +48,26 @@ describe('MeetingsService', () => {
 			it.todo('should return meetings between a specific start and end date')
 		})
 		describe('when querying with pagination', () => {
-			it.todo('should return paginated meetings')
+			it('should return meetings with the specified pagination options', async () => {
+				// Want
+				const paginationOptions: PaginationOptions = {
+					page: 2,
+					limit: 20,
+				}
+				const { page, limit } = paginationOptions
+				const skip = (page - 1) * limit
+				const take = limit
+				const want = { skip, take }
+				// When
+				const meetings = Array.from({ length: 10 }, () => new Meeting())
+				meetingRepository.findAndCount.mockResolvedValue(meetings)
+
+				// Got
+				await service.findAll(paginationOptions)
+
+				// Assert
+				expect(meetingRepository.findAndCount).toHaveBeenCalledWith(want)
+			})
 		})
 		describe('otherwise', () => {
 			it('should return an array of meetings', async () => {
@@ -55,10 +75,14 @@ describe('MeetingsService', () => {
 				const want = Array.from({ length: 10 }, () => new Meeting())
 
 				// When
-				meetingRepository.find.mockResolvedValue(want)
+				meetingRepository.findAndCount.mockResolvedValue([want])
+				const defaultPagination: PaginationOptions = {
+					page: 1,
+					limit: 10,
+				}
 
 				// Got
-				const got = await service.findAll()
+				const { items: got } = await service.findAll(defaultPagination)
 
 				// Assert
 				expect(got).toEqual(want)
