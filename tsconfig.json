@@ -53,6 +53,12 @@
       ],
       "@app/middlewares/*": [
         "libs/middlewares/src/*"
+      ],
+      "@app/types": [
+        "libs/types/src"
+      ],
+      "@app/types/*": [
+        "libs/types/src/*"
       ]
     }
   }
