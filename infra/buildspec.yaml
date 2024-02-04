@@ -1,0 +1,9 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - echo ECR Login URL ${ECR_LOGIN_URL}
+      - echo ECR Repository URI ${ECR_REPOSITORY_URI}
