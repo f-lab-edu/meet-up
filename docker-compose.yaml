@@ -14,6 +14,7 @@ services:
       - "8080:3000"
     environment:
       - NODE_ENV=development
+      - DATABASE_HOST=database
   members:
     container_name: members-service
     build:
@@ -28,6 +29,7 @@ services:
       - "8081:3000"
     environment:
       - NODE_ENV=development
+      - DATABASE_HOST=database
   attendances:
     container_name: attendances-service
     build:
@@ -42,6 +44,7 @@ services:
       - "8082:3000"
     environment:
       - NODE_ENV=development
+      - DATABASE_HOST=database
   database:
     # How to Use the Postgres Docker Official Image
     # https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/

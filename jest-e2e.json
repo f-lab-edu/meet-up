@@ -1,0 +1,24 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@app/entities(|/.*)$": "<rootDir>/libs/entities/src/$1",
+    "^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
+    "^@app/log(|/.*)$": "<rootDir>/libs/log/src/$1",
+    "^@app/auth(|/.*)$": "<rootDir>/libs/auth/src/$1",
+    "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/$1",
+    "^@app/middlewares(|/.*)$": "<rootDir>/libs/middlewares/src/$1"
+  },
+  "globalSetup": "<rootDir>/test-utils/e2e/setup.ts",
+  "globalTeardown": "<rootDir>/test-utils/e2e/teardown.ts",
+  "testTimeout": 10000
+}
