@@ -506,6 +506,12 @@ Resources:
           - Name: NODE_ENV
             Type: PLAINTEXT
             Value: production
+          - Name: ECR_LOGIN_URL
+            Type: PLAINTEXT
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com
+          - Name: ECR_REPOSITORY_URI
+            Type: PLAINTEXT
+            Value: !GetAtt [ EcrRepository, RepositoryUri ]
         Image: aws/codebuild/standard:7.0
         Type: LINUX_CONTAINER
       Name: !Ref AWS::StackName
