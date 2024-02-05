@@ -4,6 +4,22 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
+      # Checking requirements
       - aws --version
+      - docker version
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - TIMESTAMP=$(date +%Y%m%d%H%M%S)
+      - ENV_TYPE="prod" # todo replace this with the relevant environment
+      - IMAGE_TAG="${ENV_TYPE}-${COMMIT_HASH}-${TIMESTAMP}"
       - echo ECR Login URL ${ECR_LOGIN_URL}
       - echo ECR Repository URI ${ECR_REPOSITORY_URI}
+      - echo AWS Default Region ${AWS_DEFAULT_REGION}
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_LOGIN_URL
+  build:
+    commands:
+      - echo Docker build command is running...
+      - docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG --build-arg APP=members .
+  post_build:
+    commands:
+      - echo Pushing the Docker images...
+      - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
