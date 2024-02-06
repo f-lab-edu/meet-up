@@ -461,6 +461,7 @@ Resources:
                     - arn:aws:s3:::${BucketName}/*
                     - BucketName: !Ref ArtifactStore
               # Allow the CodeBuild to push Images to the EcrRepository in ECR.
+              # https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-push.html#image-push-iam
               - Effect: Allow
                 Action:
                   - ecr:BatchCheckLayerAvailability
