@@ -328,9 +328,9 @@ Resources:
             - ContainerPort: 80
               HostPort: 80
               Protocol: tcp
-          Environment:
-            - Name: DB_HOST
-              Value: !GetAtt [ DBInstance, Endpoint.Address ]
+  #          Environment:
+  #            - Name: DB_HOST
+  #              Value: !GetAtt [ DBInstance, Endpoint.Address ]
   ServiceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -373,19 +373,19 @@ Resources:
           FromPort: 5432
           ToPort: 5432
           SourceSecurityGroupId: !Ref ServiceSecurityGroup
-  DBInstance:
-    Type: AWS::RDS::DBInstance
-    Properties:
-      AllocatedStorage: 20
-      DBInstanceClass: db.t4g.micro
-      Engine: postgres
-      EngineVersion: 16.1
-      MasterUsername: postgres
-      MasterUserPassword: postgres
-      VPCSecurityGroups:
-        - !Ref DBSecurityGroup
-      DBSubnetGroupName: !Ref DBSubnetGroup
-      DBName: postgres
+  #  DBInstance:
+  #    Type: AWS::RDS::DBInstance
+  #    Properties:
+  #      AllocatedStorage: 20
+  #      DBInstanceClass: db.t4g.micro
+  #      Engine: postgres
+  #      EngineVersion: 16.1
+  #      MasterUsername: postgres
+  #      MasterUserPassword: postgres
+  #      VPCSecurityGroups:
+  #        - !Ref DBSecurityGroup
+  #      DBSubnetGroupName: !Ref DBSubnetGroup
+  #      DBName: postgres
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
