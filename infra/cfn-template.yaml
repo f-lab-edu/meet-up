@@ -316,13 +316,13 @@ Resources:
         - FARGATE
       NetworkMode: awsvpc
       ContainerDefinitions:
-        - Name: test # todo use parameter
+        - Name: meetings # todo use parameter
           Image: public.ecr.aws/nginx/nginx:latest
           LogConfiguration:
             LogDriver: awslogs
             Options:
               awslogs-group: !Ref TaskDefinitionLogGroup
-              awslogs-stream-prefix: test # todo use Container's name
+              awslogs-stream-prefix: meetings # todo use Container's name
               awslogs-region: !Ref AWS::Region
           PortMappings:
             - ContainerPort: 80
@@ -349,7 +349,7 @@ Resources:
       TaskDefinition: !Ref TaskDefinition
       HealthCheckGracePeriodSeconds: 60
       LoadBalancers:
-        - ContainerName: test # todo use parameter
+        - ContainerName: meetings # todo use parameter
           ContainerPort: 80
           TargetGroupArn: !GetAtt [ TargetGroup, TargetGroupArn ]
       NetworkConfiguration:
