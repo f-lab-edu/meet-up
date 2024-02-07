@@ -383,7 +383,7 @@ Resources:
       MasterUsername: postgres
       MasterUserPassword: postgres
       VPCSecurityGroups:
-        - !Ref ServiceSecurityGroup
+        - !Ref DBSecurityGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
