@@ -328,6 +328,9 @@ Resources:
             - ContainerPort: 80
               HostPort: 80
               Protocol: tcp
+          Environment:
+            - Name: DB_HOST
+              Value: !GetAtt [ DBInstance, Endpoint.Address ]
   ServiceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
