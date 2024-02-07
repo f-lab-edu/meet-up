@@ -385,6 +385,7 @@ Resources:
       VPCSecurityGroups:
         - !Ref DBSecurityGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
+      DBName: postgres
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
